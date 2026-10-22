@@ -291,13 +291,25 @@ O projeto conta com um servidor HTTP próprio (`server.js`) configurado com supo
 
 O projeto inclui autenticação Google, acompanhamento de candidaturas em `candidato.html` e gerenciamento administrativo em `admin.html`.
 
-1. Crie um projeto no Firebase e ative **Authentication > Google**, **Firestore Database** e **Storage**.
+1. Crie um projeto no Firebase e ative **Authentication > Google** e **Firestore Database**.
 2. Copie as credenciais do aplicativo Web para `firebase-config.js`.
-3. Publique `firestore.rules` no Firestore e `storage.rules` no Storage.
+3. Publique `firestore.rules` no Firestore. O currículo é enviado ao Resend pelo servidor e não usa Firebase Storage.
 4. O e-mail `umoliveiradev@gmail.com` já está autorizado como administrador nas regras. Para outros administradores, crie manualmente no Firestore o documento `admins/{UID_DO_ADMIN}`.
 5. Adicione o domínio de produção em **Authentication > Settings > Authorized domains**.
 
-Os currículos são armazenados em `resumes/{uid}/` e cada candidatura é gravada na coleção `applications`. O candidato só acessa os próprios registros; o administrador só acessa registros quando estiver na coleção `admins`.
+Cada candidatura é gravada na coleção `applications` e o currículo é anexado ao e-mail do RH. O candidato só acessa os próprios registros; o administrador só acessa registros quando estiver autorizado.
+
+### Resend no servidor
+
+Configure estas variáveis de ambiente no servidor Node:
+
+```bash
+RESEND_API_KEY=re_xxxxxxxxx
+RESEND_TO_EMAIL=umoliveiradev@gmail.com
+RESEND_FROM_EMAIL=onboarding@resend.dev
+```
+
+Em produção, use um remetente de um domínio verificado no Resend. Nunca coloque `RESEND_API_KEY` no JavaScript do navegador.
 
 ---
 

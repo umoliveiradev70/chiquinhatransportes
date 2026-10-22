@@ -932,9 +932,18 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const authResult = await firebaseServices.signInWithGoogle();
         const user = authResult.user;
-        const filePath = `resumes/${user.uid}/${Date.now()}_${selectedFile.name}`;
-        const fileSnapshot = await firebaseServices.storage.ref(filePath).put(selectedFile);
-        const resumeUrl = await fileSnapshot.ref.getDownloadURL();
+        const fileContent = await readFileAsBase64(selectedFile);
+        const emailResponse = await fetch('/api/send-application', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jobId: formJobId.value,
+            jobTitle: formJobTitleHidden.value,
+            candidate: { name: nameInput.value.trim(), email: emailInput.value.trim(), phone: phoneInput.value.trim(), city: cityInput.value.trim(), cnh: document.getElementById('cand-cnh').value, state: document.getElementById('cand-state').value, notes: document.getElementById('cand-notes').value.trim() },
+            file: { name: selectedFile.name, type: selectedFile.type, content: fileContent }
+          })
+        });
+        if (!emailResponse.ok) throw new Error('Falha no envio pelo Resend');
 
         await firebaseServices.db.collection('applications').add({
           userId: user.uid,
@@ -949,11 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           jobId: formJobId.value,
           jobTitle: formJobTitleHidden.value,
-          resume: {
-            name: selectedFile.name,
-            url: resumeUrl,
-            path: filePath
-          },
+          resume: { name: selectedFile.name, delivery: 'resend' },
           status: 'recebida',
           statusLabel: 'Candidatura recebida',
           createdAt: firebaseServices.serverTimestamp(),
@@ -975,6 +980,15 @@ document.addEventListener('DOMContentLoaded', () => {
         formSpinner.style.display = 'none';
         btnSubmitText.innerHTML = '<i class="fa-solid fa-check"></i> Enviar Minha Candidatura';
       }
+    });
+  }
+
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
   }
 

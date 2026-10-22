@@ -10,14 +10,12 @@
   firebase.initializeApp(config);
   const auth = firebase.auth();
   const db = firebase.firestore();
-  const storage = firebase.storage();
   const provider = new firebase.auth.GoogleAuthProvider();
 
   window.cqFirebase = {
     configured: true,
     auth,
     db,
-    storage,
     serverTimestamp: () => firebase.firestore.FieldValue.serverTimestamp(),
     signInWithGoogle: () => auth.signInWithPopup(provider),
     signOut: () => auth.signOut(),
