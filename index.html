@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trabalhe Conosco | Chiquinha Transportes - Vagas de Emprego</title>
+  <meta name="description" content="Encontre oportunidades de carreira na Chiquinha Transportes. Vagas para motoristas carreteiros, logística, manutenção de frota e administrativo. Cadastre seu currículo!">
+  <meta name="keywords" content="Chiquinha Transportes, vagas de emprego, motorista carreteiro, logística, transporte rodoviário, banco de talentos, trabalhar na Chiquinha">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Preload Hero Banners for Instant Theme Switching -->
+  <link rel="preload" as="image" href="assets/banner_light.png">
+  <link rel="preload" as="image" href="assets/banner_black.png">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Theme Initialization to prevent FOUC -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('cq_theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Full-Page Site Opening Video Overlay -->
+  <div id="site-intro-overlay" class="site-intro-overlay" role="dialog" aria-modal="true" aria-label="Abertura do Site">
+    <div class="intro-video-container">
+      <video id="intro-video" class="intro-video" playsinline preload="auto" muted>
+        <source src="assets/introsite.mp4" type="video/mp4">
+        Seu navegador não suporta reprodução de vídeo.
+      </video>
+    </div>
+
+    <!-- Intro Header Controls -->
+    <div class="intro-top-bar">
+      <div class="intro-brand">
+        <img src="assets/logo.png" alt="Chiquinha Transportes" class="intro-logo">
+      </div>
+      <div class="intro-controls">
+        <button type="button" class="intro-btn intro-btn-audio" id="intro-audio-btn" title="Ativar/Desativar Som" aria-label="Ativar som do vídeo">
+          <i class="fa-solid fa-volume-xmark" id="intro-audio-icon"></i>
+          <span id="intro-audio-text">Ativar Som</span>
+        </button>
+        <button type="button" class="intro-btn intro-btn-skip" id="intro-skip-btn" title="Pular Abertura" aria-label="Pular vídeo de abertura">
+          <span>Pular Abertura</span>
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Intro Bottom Bar & Progress -->
+    <div class="intro-bottom-bar">
+      <div class="intro-progress-track">
+        <div class="intro-progress-fill" id="intro-progress-fill"></div>
+      </div>
+      <div class="intro-bottom-content">
+        <span class="intro-caption"><i class="fa-solid fa-truck-moving text-gold"></i> Chiquinha Transportes • Conectando Destinos</span>
+        <button type="button" class="intro-enter-site" id="intro-enter-btn">
+          <span>Acessar o Site</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-Page Theme Transition Ripple Overlay -->
+  <div id="theme-ripple-overlay" class="theme-ripple-overlay" aria-hidden="true"></div>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-announcement">
+    <div class="container announcement-content">
+      <div class="announcement-badge">
+        <i class="fa-solid fa-truck-fast"></i> Oportunidades Abertas
+      </div>
+      <p>Estamos contratando motoristas e profissionais de logística em todo o Brasil!</p>
+      <a href="#banco-de-talentos" class="announcement-link">Deixar currículo no Banco de Talentos <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="main-header" id="header">
+    <div class="container header-container">
+      <a href="#" class="brand-logo" aria-label="Página Inicial Chiquinha Transportes">
+        <img src="assets/logo.png" alt="Logo Chiquinha Transportes" class="logo-img" id="site-logo">
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="desktop-nav" aria-label="Navegação Principal">
+        <a href="#quem-somos" class="nav-link">A Empresa</a>
+        <a href="#banco-de-talentos" class="nav-link">Banco de Talentos</a>
+        <a href="#canais-atendimento" class="nav-link">Canais de Atendimento</a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="header-actions">
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Alternar tema escuro/claro" title="Alternar tema escuro/claro">
+          <i class="fa-solid fa-moon icon-moon"></i>
+          <i class="fa-solid fa-sun icon-sun"></i>
+        </button>
+
+        <button class="btn btn-outline" id="btn-candidate-area">
+          <i class="fa-solid fa-user"></i>
+          <span>Área do Candidato</span>
+        </button>
+
+        <a href="#vagas" class="btn btn-primary">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>Vagas Abertas</span>
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu de navegação mobile" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer" id="mobile-drawer">
+    <div class="mobile-drawer-header">
+      <img src="assets/logo.png" alt="Chiquinha Transportes" class="mobile-logo">
+      <button class="drawer-close" id="drawer-close" aria-label="Fechar menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="mobile-nav-links">
+      <a href="#vagas" class="mobile-link"><i class="fa-solid fa-briefcase"></i> Vagas Abertas</a>
+      <a href="#quem-somos" class="mobile-link"><i class="fa-solid fa-building"></i> A Empresa</a>
+      <a href="#banco-de-talentos" class="mobile-link"><i class="fa-solid fa-address-card"></i> Banco de Talentos</a>
+    </nav>
+    <div class="mobile-drawer-footer">
+      <button class="btn btn-outline w-100 theme-toggle-mobile" id="theme-toggle-mobile" aria-label="Alternar tema">
+        <i class="fa-solid fa-moon" id="mobile-theme-icon"></i>
+        <span id="mobile-theme-text">Modo Escuro</span>
+      </button>
+      <button class="btn btn-outline w-100 mt-2" id="btn-candidate-area-mobile">
+        <i class="fa-solid fa-user"></i> Área do Candidato
+      </button>
+      <a href="#vagas" class="btn btn-primary w-100 mt-2">
+        <i class="fa-solid fa-magnifying-glass"></i> Encontrar Vagas
+      </a>
+    </div>
+  </div>
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero">
+    <div class="hero-backdrop" id="hero-backdrop"></div>
+    <div class="hero-gradient-overlay"></div>
+
+    <div class="container hero-container">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span class="pulsing-dot"></span>
+          <span>Portal de Carreiras Oficial • Chiquinha Transportes</span>
+        </div>
+        
+        <h1 class="hero-title">
+          Seu destino,<br>
+          <span class="text-gradient">nosso compromisso.</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+          Faça parte de uma das transportadoras mais admiradas do país. Valorizamos quem move as estradas brasileiras com segurança, modernidade e tecnologia.
+        </p>
+
+        <div class="hero-actions" style="display: flex; gap: 0.85rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+          <a href="#busca-vagas" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-magnifying-glass"></i> Ver Todas as Vagas
+          </a>
+          <button type="button" class="btn btn-outline-light btn-lg" id="btn-replay-intro">
+            <i class="fa-solid fa-circle-play text-gold"></i> Rever Vídeo de Abertura
+          </button>
+        </div>
+      </div>
+
+      <!-- Solides-Style Search Card -->
+      <div class="search-card-wrapper" id="busca-vagas">
+        <div class="search-card">
+          <div class="search-card-header">
+            <h3><i class="fa-solid fa-magnifying-glass text-gold"></i> Encontre a vaga ideal para você</h3>
+            <p>Filtre por cargo, localização ou modalidade de trabalho</p>
+          </div>
+
+          <form id="search-form" class="search-form" onsubmit="event.preventDefault();">
+            <!-- Keyword search -->
+            <div class="form-group keyword-group">
+              <label for="search-input">Qual vaga ou cargo você procura?</label>
+              <div class="input-icon-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input 
+                  type="text" 
+                  id="search-input" 
+                  placeholder="Ex: Motorista Carreteiro, Analista de Frota, Mecânico..." 
+                  autocomplete="off"
+                >
+                <button type="button" class="clear-input-btn" id="clear-search-btn" title="Limpar busca" style="display: none;">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Location dropdown -->
+            <div class="form-group">
+              <label for="location-select">Localidade / Filial</label>
+              <div class="input-icon-box">
+                <i class="fa-solid fa-location-dot"></i>
+                <select id="location-select">
+                  <option value="todos">Todas as localidades</option>
+                  <option value="Pouso Alegre - MG">Pouso Alegre - MG (Matriz)</option>
+                  <option value="Betim - MG">Betim - MG (Filial BH)</option>
+                  <option value="Campinas - SP">Campinas - SP</option>
+                  <option value="São Paulo - SP">São Paulo - SP</option>
+                  <option value="Varginha - MG">Varginha - MG</option>
+                  <option value="Rotas Nacionais">Rotas Nacionais (Interestadual)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Department dropdown -->
+            <div class="form-group">
+              <label for="department-select">Área de Atuação</label>
+              <div class="input-icon-box">
+                <i class="fa-solid fa-layer-group"></i>
+                <select id="department-select">
+                  <option value="todas">Todas as áreas</option>
+                  <option value="Motoristas & Transporte">Motoristas & Transporte</option>
+                  <option value="Logística & Operações">Logística & Operações</option>
+                  <option value="Oficina & Manutenção Pesada">Oficina & Manutenção Pesada</option>
+                  <option value="Administrativo & RH">Administrativo & RH</option>
+                  <option value="Banco de Talentos">Banco de Talentos</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Search Button -->
+            <div class="form-group button-group">
+              <label class="invisible-label">&nbsp;</label>
+              <button type="button" class="btn btn-primary btn-search" id="btn-submit-search">
+                <i class="fa-solid fa-arrow-right"></i>
+                <span>Buscar Vagas</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Vacancies Section (Main Job Portal) -->
+  <section class="vacancies-section" id="vagas">
+    <div class="container">
+      <div class="section-header-flex">
+        <div>
+          <span class="section-tag">Oportunidades em Aberto</span>
+          <h2 class="section-title">Vagas Disponíveis na Chiquinha Transportes</h2>
+          <p class="section-description">Confira as posições abertas e inicie o seu processo seletivo online de forma simples e rápida.</p>
+        </div>
+        <div class="vacancies-meta-info">
+          <span class="counter-badge" id="jobs-count-badge">Carregando vagas...</span>
+        </div>
+      </div>
+
+      <!-- Quick Filter Chips -->
+      <div class="filter-chips-wrapper">
+        <div class="filter-chips" id="filter-chips">
+          <button class="chip active" data-filter="todos">
+            <i class="fa-solid fa-border-all"></i> Todas as Vagas
+          </button>
+          <button class="chip" data-filter="motorista">
+            <i class="fa-solid fa-truck"></i> Motoristas & Estrada
+          </button>
+          <button class="chip" data-filter="logistica">
+            <i class="fa-solid fa-boxes-stacked"></i> Logística & Tráfego
+          </button>
+          <button class="chip" data-filter="manutencao">
+            <i class="fa-solid fa-wrench"></i> Oficina & Mecânica
+          </button>
+          <button class="chip" data-filter="administrativo">
+            <i class="fa-solid fa-briefcase"></i> Administrativo & RH
+          </button>
+          <button class="chip chip-pcd" data-filter="pcd">
+            <i class="fa-solid fa-wheelchair"></i> Vagas PcD
+          </button>
+        </div>
+      </div>
+
+      <!-- Jobs Grid Container -->
+      <div class="jobs-grid" id="jobs-grid">
+        <!-- Rendered by JavaScript dynamically -->
+      </div>
+
+      <!-- Empty State (Shown when no jobs match filter) -->
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <div class="empty-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+        <h3>Nenhuma vaga encontrada com os filtros selecionados</h3>
+        <p>Tente ajustar os termos da sua pesquisa ou conheça nosso Banco de Talentos para oportunidades futuras.</p>
+        <div class="empty-actions">
+          <button class="btn btn-outline" id="btn-reset-filters">Limpar Filtros de Busca</button>
+          <a href="#banco-de-talentos" class="btn btn-primary">Cadastrar no Banco de Talentos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Company Section (Quem Somos) -->
+  <section class="about-section" id="quem-somos">
+    <div class="container about-container">
+      <div class="about-image-column">
+        <div class="about-image-card">
+          <img src="assets/banner.jpg" alt="Instalações e Frota da Chiquinha Transportes" class="about-hero-img">
+        </div>
+        <div class="about-badge-card">
+          <div class="badge-icon"><i class="fa-solid fa-shield-heart text-gold"></i></div>
+          <div>
+            <strong>Compromisso e Segurança</strong>
+            <span>Mais de 25 anos de tradição nas rodovias</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-text-column">
+        <span class="section-tag">Nossa Trajetória</span>
+        <h2 class="section-title">Sobre a Chiquinha Transportes</h2>
+        <h3 class="about-subtitle">"Seu destino, nosso compromisso"</h3>
+
+        <p class="about-paragraph">
+          A história da <strong>Chiquinha Transportes</strong> começou em 1998, quando os irmãos Chico e Bento iniciaram suas atividades realizando serviços de mudança sob o nome "Irmãos Mudança".
+        </p>
+
+        <p class="about-paragraph">
+          Com o crescimento da demanda, decidiram formalizar o negócio, dando origem à Chiquinha Transportes, nome escolhido em homenagem à mãe dos irmãos, falecida no início dos anos 2000.
+        </p>
+
+        <p class="about-paragraph">
+          Ao longo dos anos, a empresa expandiu sua frota e equipe, consolidando-se no segmento de transportes por meio do compromisso com a qualidade e a satisfação dos clientes.
+        </p>
+
+        <p class="about-paragraph">
+          Atualmente, a Chiquinha Transportes conta com 40 colaboradores e continua construindo sua trajetória, preservando os valores e a história que marcaram sua origem.
+        </p>
+
+        <div class="about-values-grid">
+          <div class="value-item">
+            <div class="value-icon"><i class="fa-solid fa-heart"></i></div>
+            <div>
+              <h4>Gente em Primeiro Lugar</h4>
+              <p>Cuidado e respeito aos nossos caminhoneiros e equipe interna.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+            <div>
+              <h4>Tecnologia & Inovação</h4>
+              <p>Rastreamento 24h, segurança preditiva e processos digitais.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon"><i class="fa-solid fa-handshake"></i></div>
+            <div>
+              <h4>Pontualidade & Ética</h4>
+              <p>Transparência com nossos colaboradores e compromisso com o cliente.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon"><i class="fa-solid fa-leaf"></i></div>
+            <div>
+              <h4>Sustentabilidade</h4>
+              <p>Frota com motores Euro 6 com menor emissão de poluentes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Banco de Talentos Section (Solides Style Dark Banner) -->
+  <section class="talent-pool-section" id="banco-de-talentos">
+    <div class="container talent-pool-container">
+      <div class="talent-badge">
+        <i class="fa-solid fa-star text-gold"></i> Banco de Talentos Chiquinha
+      </div>
+      <h2 class="talent-title">Não encontrou a vaga que procurava hoje?</h2>
+      <p class="talent-description">
+        Cadastre seu currículo em nosso Banco de Talentos oficial! Nosso time de Recursos Humanos avalia frequentemente os perfis cadastrados para novas rotas, filiais e vagas que surgem semanalmente.
+      </p>
+      <div class="talent-actions">
+        <button class="btn btn-primary btn-lg" id="btn-open-talent-modal">
+          <i class="fa-solid fa-file-arrow-up"></i>
+          <span>Cadastrar Meu Currículo Agora</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-top">
+      <div class="footer-col brand-col">
+        <div class="footer-logo-wrapper">
+          <img src="assets/logo.png" alt="Chiquinha Transportes" class="footer-logo">
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="https://wa.me/5535997472363" target="_blank" rel="noopener noreferrer" class="social-link" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-heading">Navegação Rápida</h4>
+        <ul class="footer-links">
+          <li><a href="#vagas">Vagas Abertas</a></li>
+          <li><a href="#quem-somos">Sobre a Empresa</a></li>
+          <li><a href="#banco-de-talentos">Banco de Talentos</a></li>
+          <li><a href="#" id="footer-candidate-area">Área do Candidato</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col" id="canais-atendimento">
+        <h4 class="footer-heading">Canais de Atendimento RH</h4>
+        <ul class="footer-contact">
+          <li><i class="fa-solid fa-location-dot"></i> Rodovia Fernão Dias, BR-381 - Polo Logístico, Pouso Alegre - MG</li>
+          <li><i class="fa-solid fa-envelope"></i> <a href="mailto:chiquinhatransports@gmail.com" style="color: inherit;">chiquinhatransports@gmail.com</a></li>
+          <li><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/5535997472363" target="_blank" rel="noopener noreferrer" style="color: inherit;">(35) 99747-2363</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span id="current-year">2026</span> Chiquinha Transportes Rodoviários Ltda. Todos os direitos reservados.</p>
+      <div class="footer-legal-links">
+        <a href="#">Privacidade & LGPD</a>
+        <span>•</span>
+        <a href="#">Termos de Uso</a>
+        <span>•</span>
+        <a href="#">Canal de Ética</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 1: DETALHES DA VAGA                                -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop" id="job-details-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="close-job-details-btn" aria-label="Fechar modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="modal-header" id="modal-job-header">
+        <div class="modal-badge-row">
+          <span class="badge badge-primary" id="modal-job-type">CLT Efetivo</span>
+          <span class="badge badge-light" id="modal-job-location">Pouso Alegre - MG</span>
+        </div>
+        <h2 class="modal-title" id="modal-job-title">Título da Vaga</h2>
+      </div>
+
+      <div class="modal-body" id="modal-job-body">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-modal-cancel">Voltar</button>
+        <button class="btn btn-primary" id="btn-modal-apply">
+          <i class="fa-solid fa-paper-plane"></i> Candidatar-se a Esta Vaga
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 2: FORMULÁRIO DE CANDIDATURA                       -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop" id="application-modal">
+    <div class="modal-card modal-card-form">
+      <button class="modal-close-btn" id="close-application-btn" aria-label="Fechar formulário">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="modal-header">
+        <div class="application-header-brand">
+          <img src="assets/logo.png" alt="Chiquinha Transportes" class="app-modal-logo">
+          <div>
+            <span class="text-gold font-semibold text-xs text-uppercase">Candidatura Online</span>
+            <h2 class="modal-title" id="apply-job-title">Formulário de Candidatura</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs: Formulário de Candidatura & Requisitos e Atribuições -->
+      <div class="modal-tabs" role="tablist">
+        <button type="button" class="modal-tab-btn active" id="tab-btn-form" data-tab="form" role="tab" aria-selected="true">
+          Formulário de Candidatura
+        </button>
+        <button type="button" class="modal-tab-btn" id="tab-btn-requirements" data-tab="requirements" role="tab" aria-selected="false">
+          Requisitos & Atribuições
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- TAB 1: FORMULÁRIO DE CANDIDATURA -->
+        <div class="modal-tab-pane active" id="tab-pane-form">
+          <form id="candidate-form" class="application-form" novalidate>
+            <input type="hidden" id="form-job-id" value="">
+            <input type="hidden" id="form-job-title-hidden" value="">
+
+            <!-- Row 1: Nome Completo & E-mail para Contato (as in image 2) -->
+            <div class="form-row-2">
+              <div class="form-field">
+                <label for="cand-name">Nome Completo <span class="required">*</span></label>
+                <input type="text" id="cand-name" placeholder="Ex: João da Silva Santos" required>
+                <span class="field-error" id="error-cand-name">Informe seu nome completo</span>
+              </div>
+
+              <div class="form-field">
+                <label for="cand-email">E-mail para Contato <span class="required">*</span></label>
+                <input type="email" id="cand-email" placeholder="Ex: joao.silva@email.com" required>
+                <span class="field-error" id="error-cand-email">Informe um e-mail válido</span>
+              </div>
+            </div>
+
+            <!-- Row 2: Telefone / WhatsApp & Cidade / Estado (as in image 2) -->
+            <div class="form-row-2">
+              <div class="form-field">
+                <label for="cand-phone">Telefone / WhatsApp <span class="required">*</span></label>
+                <input type="tel" id="cand-phone" placeholder="(35) 99999-9999" maxlength="15" required>
+                <span class="field-error" id="error-cand-phone">Informe seu WhatsApp com DDD</span>
+              </div>
+
+              <div class="form-field">
+                <label for="cand-city">Cidade / Estado <span class="required">*</span></label>
+                <input type="text" id="cand-city" placeholder="Ex: Pouso Alegre - MG" required>
+                <span class="field-error" id="error-cand-city">Informe sua cidade e estado</span>
+              </div>
+            </div>
+
+            <!-- Row 3: Categoria CNH & Estado (UF) -->
+            <div class="form-row-2">
+              <div class="form-field">
+                <label for="cand-cnh">Categoria CNH</label>
+                <select id="cand-cnh">
+                  <option value="NaoPossuo">Não possuo CNH</option>
+                  <option value="A">Categoria A (Moto)</option>
+                  <option value="B">Categoria B (Carro)</option>
+                  <option value="C">Categoria C (Caminhão leve)</option>
+                  <option value="D">Categoria D (Ônibus/Truck)</option>
+                  <option value="E" selected>Categoria E (Carreta/Bitrem)</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="cand-state">Estado (UF)</label>
+                <select id="cand-state">
+                  <option value="MG" selected>Minas Gerais (MG)</option>
+                  <option value="SP">São Paulo (SP)</option>
+                  <option value="RJ">Rio de Janeiro (RJ)</option>
+                  <option value="ES">Espírito Santo (ES)</option>
+                  <option value="PR">Paraná (PR)</option>
+                  <option value="SC">Santa Catarina (SC)</option>
+                  <option value="RS">Rio Grande do Sul (RS)</option>
+                  <option value="GO">Goiás (GO)</option>
+                  <option value="Outro">Outro Estado</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- CV Upload Box -->
+            <div class="form-field cv-upload-field">
+              <label>Anexar Currículo (PDF ou DOCX) <span class="required">*</span></label>
+              <div class="upload-dropzone" id="upload-dropzone">
+                <input type="file" id="cand-cv-file" accept=".pdf,.doc,.docx" class="file-input-hidden">
+                <div class="dropzone-content" id="dropzone-default">
+                  <i class="fa-solid fa-cloud-arrow-up text-gold dropzone-icon"></i>
+                  <p><strong>Clique para selecionar</strong> ou arraste seu arquivo aqui</p>
+                  <span>Formatos suportados: PDF, DOC, DOCX (Máx. 5MB)</span>
+                </div>
+                <div class="dropzone-file-selected" id="dropzone-selected" style="display: none;">
+                  <i class="fa-solid fa-file-pdf file-icon"></i>
+                  <div class="file-info">
+                    <strong id="selected-file-name">curriculo.pdf</strong>
+                    <span id="selected-file-size">1.2 MB</span>
+                  </div>
+                  <button type="button" class="btn-remove-file" id="btn-remove-file" title="Remover arquivo">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </div>
+              <span class="field-error" id="error-cand-cv">Selecione o arquivo do seu currículo</span>
+            </div>
+
+            <!-- Message / Observations -->
+            <div class="form-field">
+              <label for="cand-notes">Mensagem adicional ou resumo profissional (opcional)</label>
+              <textarea id="cand-notes" rows="3" placeholder="Conte brevemente sobre seus objetivos ou rotas habituais..."></textarea>
+            </div>
+
+            <!-- Privacy Acceptance -->
+            <div class="form-checkbox">
+              <input type="checkbox" id="cand-privacy" required checked>
+              <label for="cand-privacy">
+                Concordo com o tratamento dos meus dados para fins exclusivos deste processo seletivo, em conformidade com a LGPD (Lei nº 13.709/2018).
+              </label>
+            </div>
+            <span class="field-error" id="error-cand-privacy">Você deve aceitar os termos de privacidade</span>
+
+            <div class="modal-footer form-footer">
+              <button type="button" class="btn btn-outline" id="btn-cancel-application">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="btn-submit-application">
+                <span class="spinner" id="form-spinner" style="display: none;"></span>
+                <span id="btn-submit-text"><i class="fa-solid fa-check"></i> Enviar Minha Candidatura</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- TAB 2: REQUISITOS & ATRIBUIÇÕES -->
+        <div class="modal-tab-pane" id="tab-pane-requirements">
+          <div id="job-requirements-content">
+            <!-- Dynamic content populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 3: ÁREA DO CANDIDATO / LOGIN                       -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop" id="candidate-login-modal">
+    <div class="modal-card modal-card-sm">
+      <button class="modal-close-btn" id="close-login-btn" aria-label="Fechar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="modal-header text-center">
+        <div class="login-brand-icon">
+          <i class="fa-solid fa-user-shield text-gold"></i>
+        </div>
+        <h2 class="modal-title">Área do Candidato</h2>
+        <p class="modal-subtitle">Acompanhe suas candidaturas e mantenha seus dados sempre atualizados.</p>
+      </div>
+
+      <div class="modal-body">
+        <form id="login-form" class="login-form" onsubmit="event.preventDefault();">
+          <div class="form-field">
+            <label for="login-cpf">CPF do Candidato</label>
+            <div class="input-icon-box">
+              <i class="fa-regular fa-id-card"></i>
+              <input type="text" id="login-cpf" placeholder="000.000.000-00" maxlength="14" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="login-pass">Senha de Acesso</label>
+            <div class="input-icon-box">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="login-pass" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div class="login-options">
+            <label class="remember-me">
+              <input type="checkbox" checked> Lembrar-me
+            </label>
+            <a href="#" class="forgot-pass" id="link-forgot-pass">Esqueceu a senha?</a>
+          </div>
+
+          <button type="button" class="btn btn-primary w-100" id="btn-do-login">
+            <i class="fa-solid fa-right-to-bracket"></i> Acessar Painel
+          </button>
+
+          <div class="login-divider">
+            <span>OU</span>
+          </div>
+
+          <button type="button" class="btn btn-outline w-100" id="btn-quick-cv-access">
+            <i class="fa-regular fa-file-lines"></i> Consultar Apenas por CPF
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JavaScript App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
