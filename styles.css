@@ -1348,8 +1348,8 @@ button, input, select, textarea {
    BANCO DE TALENTOS SECTION (SOLIDES STYLE DARK BANNER)
    ======================================================== */
 .talent-pool-section {
-  background: linear-gradient(135deg, #0b0f19 0%, #1e293b 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--bg-subtle) 0%, var(--bg-card) 100%);
+  color: var(--text-main);
   padding: 5rem 0;
   position: relative;
   overflow: hidden;
@@ -1362,7 +1362,7 @@ button, input, select, textarea {
   right: -20%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(0,0,0,0) 70%);
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(0,0,0,0) 70%);
   pointer-events: none;
 }
 
@@ -1377,25 +1377,25 @@ button, input, select, textarea {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--primary-soft);
   border: 1px solid rgba(245, 158, 11, 0.4);
   padding: 0.35rem 1rem;
   border-radius: var(--radius-full);
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--primary-lighter);
+  color: var(--primary-dark);
   margin-bottom: 1.5rem;
 }
 
 .talent-title {
   font-size: 2.5rem;
-  color: #ffffff;
+  color: var(--text-main);
   margin-bottom: 1.25rem;
 }
 
 .talent-description {
   font-size: 1.15rem;
-  color: var(--text-white-dim);
+  color: var(--text-secondary);
   line-height: 1.7;
   margin-bottom: 2.25rem;
 }
@@ -2745,8 +2745,26 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .value-item {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
+  background: transparent;
+  border: none;
+}
+
+[data-theme="dark"] .talent-pool-section {
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-slate) 100%);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .talent-badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--primary-lighter);
+}
+
+[data-theme="dark"] .talent-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .talent-description {
+  color: var(--text-white-dim);
 }
 
 [data-theme="dark"] .about-badge-card {
