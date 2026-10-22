@@ -10,7 +10,15 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const payload = req.body || {};
+  let payload = req.body || {};
+  if (typeof payload === 'string') {
+    try {
+      payload = JSON.parse(payload);
+    } catch (error) {
+      res.status(400).json({ error: 'JSON inválido.' });
+      return;
+    }
+  }
   const candidate = payload.candidate || {};
   const file = payload.file || {};
 

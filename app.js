@@ -929,9 +929,11 @@ document.addEventListener('DOMContentLoaded', () => {
       formSpinner.style.display = 'inline-block';
       btnSubmitText.textContent = 'Enviando sua candidatura...';
 
+      let submissionStage = 'login';
       try {
         const authResult = await firebaseServices.signInWithGoogle();
         const user = authResult.user;
+        submissionStage = 'email';
         const fileContent = await readFileAsBase64(selectedFile);
         const emailResponse = await fetch('/api/send-application', {
           method: 'POST',
@@ -943,8 +945,16 @@ document.addEventListener('DOMContentLoaded', () => {
             file: { name: selectedFile.name, type: selectedFile.type, content: fileContent }
           })
         });
-        if (!emailResponse.ok) throw new Error('Falha no envio pelo Resend');
+        if (!emailResponse.ok) {
+          let emailError = `API retornou HTTP ${emailResponse.status}`;
+          try {
+            const errorBody = await emailResponse.json();
+            if (errorBody.error) emailError += `: ${errorBody.error}`;
+          } catch (parseError) {}
+          throw new Error(emailError);
+        }
 
+        submissionStage = 'firestore';
         await firebaseServices.db.collection('applications').add({
           userId: user.uid,
           candidate: {
@@ -973,8 +983,11 @@ document.addEventListener('DOMContentLoaded', () => {
           8000
         );
       } catch (error) {
-        console.error('Erro ao salvar candidatura:', error);
-        showToast('Não foi possível enviar', getAuthErrorMessage(error), 'error', 10000);
+        console.error(`Erro na etapa ${submissionStage}:`, error);
+        const message = submissionStage === 'login'
+          ? getAuthErrorMessage(error)
+          : `Falha na etapa ${submissionStage === 'email' ? 'envio do currículo' : 'salvamento da candidatura'}: ${error.message || 'erro desconhecido'}`;
+        showToast('Não foi possível enviar', message, 'error', 12000);
       } finally {
         btnSubmitApplication.disabled = false;
         formSpinner.style.display = 'none';
