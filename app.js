@@ -974,13 +974,25 @@ document.addEventListener('DOMContentLoaded', () => {
         );
       } catch (error) {
         console.error('Erro ao salvar candidatura:', error);
-        showToast('Não foi possível enviar', 'Verifique o login Google e tente novamente.', 'error', 8000);
+        showToast('Não foi possível enviar', getAuthErrorMessage(error), 'error', 10000);
       } finally {
         btnSubmitApplication.disabled = false;
         formSpinner.style.display = 'none';
         btnSubmitText.innerHTML = '<i class="fa-solid fa-check"></i> Enviar Minha Candidatura';
       }
     });
+  }
+
+  function getAuthErrorMessage(error) {
+    const code = error && error.code ? error.code : '';
+    const messages = {
+      'auth/unauthorized-domain': 'Este domínio da Vercel não está autorizado no Firebase Authentication.',
+      'auth/popup-blocked': 'O navegador bloqueou a janela do Google. Permita pop-ups para este site.',
+      'auth/popup-closed-by-user': 'A janela de login foi fechada antes da conclusão.',
+      'auth/operation-not-allowed': 'O login com Google ainda não está ativado no Firebase.',
+      'auth/invalid-api-key': 'A API key do Firebase está inválida ou pertence a outro projeto.'
+    };
+    return messages[code] || `Verifique o login Google e tente novamente. Código: ${code || 'desconhecido'}`;
   }
 
   function readFileAsBase64(file) {
@@ -1164,7 +1176,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'candidato.html';
     } catch (error) {
       console.error('Erro no login Google:', error);
-      showToast('Login não concluído', 'A janela de login foi cancelada ou não pôde ser concluída.', 'error');
+      showToast('Login não concluído', getAuthErrorMessage(error), 'error', 10000);
       btnGoogleLogin.disabled = false;
       btnGoogleLogin.innerHTML = '<i class="fa-brands fa-google"></i> Entrar com Google';
     }
