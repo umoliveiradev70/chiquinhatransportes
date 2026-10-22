@@ -294,7 +294,7 @@ O projeto inclui autenticação Google, acompanhamento de candidaturas em `candi
 1. Crie um projeto no Firebase e ative **Authentication > Google**, **Firestore Database** e **Storage**.
 2. Copie as credenciais do aplicativo Web para `firebase-config.js`.
 3. Publique `firestore.rules` no Firestore e `storage.rules` no Storage.
-4. Depois do primeiro login Google do administrador, crie manualmente no Firestore o documento `admins/{UID_DO_ADMIN}`. A existência dele libera o painel.
+4. O e-mail `umoliveiradev@gmail.com` já está autorizado como administrador nas regras. Para outros administradores, crie manualmente no Firestore o documento `admins/{UID_DO_ADMIN}`.
 5. Adicione o domínio de produção em **Authentication > Settings > Authorized domains**.
 
 Os currículos são armazenados em `resumes/{uid}/` e cada candidatura é gravada na coleção `applications`. O candidato só acessa os próprios registros; o administrador só acessa registros quando estiver na coleção `admins`.
