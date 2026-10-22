@@ -429,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnFooterCandidateLogin = document.getElementById('btn-footer-candidate-login');
   const btnDoLogin = document.getElementById('btn-do-login');
   const btnQuickCvAccess = document.getElementById('btn-quick-cv-access');
+  const btnGoogleLogin = document.getElementById('btn-google-login');
   const btnOpenTalentModal = document.getElementById('btn-open-talent-modal');
 
   // Mobile Menu
@@ -833,7 +834,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Validação e Envio do Formulário de Candidatura
   if (candidateForm) {
-    candidateForm.addEventListener('submit', (e) => {
+    candidateForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       let isValid = true;
@@ -918,20 +919,62 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Simulação de envio com Loading State
+      const firebaseServices = window.cqFirebase;
+      if (!firebaseServices || !firebaseServices.configured) {
+        showToast('Firebase não configurado', 'Configure o arquivo firebase-config.js antes de enviar candidaturas.', 'error', 8000);
+        return;
+      }
+
       btnSubmitApplication.disabled = true;
       formSpinner.style.display = 'inline-block';
       btnSubmitText.textContent = 'Enviando sua candidatura...';
 
-      setTimeout(() => {
+      try {
+        const authResult = await firebaseServices.signInWithGoogle();
+        const user = authResult.user;
+        const filePath = `resumes/${user.uid}/${Date.now()}_${selectedFile.name}`;
+        const fileSnapshot = await firebaseServices.storage.ref(filePath).put(selectedFile);
+        const resumeUrl = await fileSnapshot.ref.getDownloadURL();
+
+        await firebaseServices.db.collection('applications').add({
+          userId: user.uid,
+          candidate: {
+            name: nameInput.value.trim(),
+            email: emailInput.value.trim(),
+            phone: phoneInput.value.trim(),
+            city: cityInput.value.trim(),
+            cnh: document.getElementById('cand-cnh').value,
+            state: document.getElementById('cand-state').value,
+            notes: document.getElementById('cand-notes').value.trim()
+          },
+          jobId: formJobId.value,
+          jobTitle: formJobTitleHidden.value,
+          resume: {
+            name: selectedFile.name,
+            url: resumeUrl,
+            path: filePath
+          },
+          status: 'recebida',
+          statusLabel: 'Candidatura recebida',
+          createdAt: firebaseServices.serverTimestamp(),
+          updatedAt: firebaseServices.serverTimestamp()
+        });
+
         closeApplicationModal();
         showToast(
           'Candidatura Enviada com Sucesso!',
-          `Obrigado, ${nameInput.value.split(' ')[0]}! Seu currículo para "${formJobTitleHidden.value}" foi cadastrado no sistema da Chiquinha Transportes. Entraremos em contato via WhatsApp e e-mail!`,
+          `Obrigado, ${nameInput.value.split(' ')[0]}! Acompanhe o andamento pela sua Área do Candidato.`,
           'success',
           8000
         );
-      }, 1500);
+      } catch (error) {
+        console.error('Erro ao salvar candidatura:', error);
+        showToast('Não foi possível enviar', 'Verifique o login Google e tente novamente.', 'error', 8000);
+      } finally {
+        btnSubmitApplication.disabled = false;
+        formSpinner.style.display = 'none';
+        btnSubmitText.innerHTML = '<i class="fa-solid fa-check"></i> Enviar Minha Candidatura';
+      }
     });
   }
 
@@ -1093,49 +1136,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   if (closeLoginBtn) closeLoginBtn.addEventListener('click', closeLoginModal);
 
-  if (btnDoLogin) {
-    btnDoLogin.addEventListener('click', () => {
-      const cpf = document.getElementById('login-cpf').value;
-      const pass = document.getElementById('login-pass').value;
+  async function loginWithGoogle() {
+    const firebaseServices = window.cqFirebase;
+    if (!firebaseServices || !firebaseServices.configured) {
+      showToast('Firebase não configurado', 'Configure o arquivo firebase-config.js para ativar o login Google.', 'error', 8000);
+      return;
+    }
 
-      if (!cpf || !pass) {
-        showToast('Atenção', 'Informe seu CPF e senha cadastrada para acessar.', 'error');
-        return;
-      }
-
-      btnDoLogin.innerHTML = '<span class="spinner"></span> Acessando...';
-      btnDoLogin.disabled = true;
-
-      setTimeout(() => {
-        btnDoLogin.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Acessar Painel';
-        btnDoLogin.disabled = false;
-        closeLoginModal();
-        showToast(
-          'Bem-vindo à Área do Candidato!',
-          'Seu painel foi carregado. Você não possui processos pendentes de documentos no momento.',
-          'success',
-          6000
-        );
-      }, 1200);
-    });
+    btnGoogleLogin.disabled = true;
+    btnGoogleLogin.innerHTML = '<span class="spinner"></span> Entrando...';
+    try {
+      await firebaseServices.signInWithGoogle();
+      window.location.href = 'candidato.html';
+    } catch (error) {
+      console.error('Erro no login Google:', error);
+      showToast('Login não concluído', 'A janela de login foi cancelada ou não pôde ser concluída.', 'error');
+      btnGoogleLogin.disabled = false;
+      btnGoogleLogin.innerHTML = '<i class="fa-brands fa-google"></i> Entrar com Google';
+    }
   }
 
-  if (btnQuickCvAccess) {
-    btnQuickCvAccess.addEventListener('click', () => {
-      const cpf = document.getElementById('login-cpf').value;
-      if (!cpf) {
-        showToast('Consulta Rápida', 'Digite seu CPF no campo acima para consultar o status de sua inscrição.', 'error');
-        return;
-      }
-      closeLoginModal();
-      showToast(
-        'Status da Candidatura',
-        `Currículo localizado para o CPF informado! Seu perfil está em fase de triagem pela equipe de RH da Chiquinha Transportes.`,
-        'success',
-        7000
-      );
-    });
-  }
+  if (btnGoogleLogin) btnGoogleLogin.addEventListener('click', loginWithGoogle);
 
   // ========================================================
   // 10. FAQ ACCORDION

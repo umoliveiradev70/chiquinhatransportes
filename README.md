@@ -287,6 +287,20 @@ O projeto conta com um servidor HTTP próprio (`server.js`) configurado com supo
 
 ---
 
+## Firebase: Área do Candidato e Painel Admin
+
+O projeto inclui autenticação Google, acompanhamento de candidaturas em `candidato.html` e gerenciamento administrativo em `admin.html`.
+
+1. Crie um projeto no Firebase e ative **Authentication > Google**, **Firestore Database** e **Storage**.
+2. Copie as credenciais do aplicativo Web para `firebase-config.js`.
+3. Publique `firestore.rules` no Firestore e `storage.rules` no Storage.
+4. Depois do primeiro login Google do administrador, crie manualmente no Firestore o documento `admins/{UID_DO_ADMIN}`. A existência dele libera o painel.
+5. Adicione o domínio de produção em **Authentication > Settings > Authorized domains**.
+
+Os currículos são armazenados em `resumes/{uid}/` e cada candidatura é gravada na coleção `applications`. O candidato só acessa os próprios registros; o administrador só acessa registros quando estiver na coleção `admins`.
+
+---
+
 <p align="center">
   <strong>Chiquinha Transportes</strong> • Portal de Vagas e Carreiras<br>
   Desenvolvido com excelência e dedicação.

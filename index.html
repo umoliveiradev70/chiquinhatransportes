@@ -25,6 +25,14 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 
+  <!-- Firebase Authentication, Firestore and Storage -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-service.js"></script>
+
   <!-- Theme Initialization to prevent FOUC -->
   <script>
     (function() {
@@ -668,42 +676,13 @@
       </div>
 
       <div class="modal-body">
-        <form id="login-form" class="login-form" onsubmit="event.preventDefault();">
-          <div class="form-field">
-            <label for="login-cpf">CPF do Candidato</label>
-            <div class="input-icon-box">
-              <i class="fa-regular fa-id-card"></i>
-              <input type="text" id="login-cpf" placeholder="000.000.000-00" maxlength="14" required>
-            </div>
-          </div>
-
-          <div class="form-field">
-            <label for="login-pass">Senha de Acesso</label>
-            <div class="input-icon-box">
-              <i class="fa-solid fa-lock"></i>
-              <input type="password" id="login-pass" placeholder="••••••••" required>
-            </div>
-          </div>
-
-          <div class="login-options">
-            <label class="remember-me">
-              <input type="checkbox" checked> Lembrar-me
-            </label>
-            <a href="#" class="forgot-pass" id="link-forgot-pass">Esqueceu a senha?</a>
-          </div>
-
-          <button type="button" class="btn btn-primary w-100" id="btn-do-login">
-            <i class="fa-solid fa-right-to-bracket"></i> Acessar Painel
+        <div class="google-login-panel">
+          <p>Entre com sua conta Google para consultar suas candidaturas, documentos e atualizações do processo seletivo.</p>
+          <button type="button" class="btn btn-primary w-100" id="btn-google-login">
+            <i class="fa-brands fa-google"></i> Entrar com Google
           </button>
-
-          <div class="login-divider">
-            <span>OU</span>
-          </div>
-
-          <button type="button" class="btn btn-outline w-100" id="btn-quick-cv-access">
-            <i class="fa-regular fa-file-lines"></i> Consultar Apenas por CPF
-          </button>
-        </form>
+          <p class="login-security-note"><i class="fa-solid fa-lock"></i> Login seguro pelo Firebase Authentication.</p>
+        </div>
       </div>
     </div>
   </div>

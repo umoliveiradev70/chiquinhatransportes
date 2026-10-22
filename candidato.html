@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área do Candidato | Chiquinha Transportes</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="portal.css">
+  <script>(function(){const t=localStorage.getItem('cq_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-service.js"></script>
+</head>
+<body class="portal-page">
+  <header class="portal-header"><div class="container portal-header-inner">
+    <a href="index.html"><img src="assets/logo.png" alt="Chiquinha Transportes" class="portal-logo"></a>
+    <div class="portal-actions"><button class="btn btn-outline" id="theme-toggle"><i class="fa-solid fa-moon"></i></button><button class="btn btn-outline" id="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div>
+  </div></header>
+  <main class="portal-content"><div class="container">
+    <div id="portal-message" class="portal-alert" style="display:none"></div>
+    <div class="portal-heading"><div class="portal-user"><img id="user-photo" src="assets/logo.png" alt=""><div><h1>Área do Candidato</h1><p id="user-name">Carregando seu perfil...</p></div></div></div>
+    <div id="applications-list" class="portal-grid"></div>
+  </div></main>
+  <script src="candidato.js"></script>
+</body>
+</html>

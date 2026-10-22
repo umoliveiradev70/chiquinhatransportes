@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo | Chiquinha Transportes</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="portal.css">
+  <script>(function(){const t=localStorage.getItem('cq_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script><script src="firebase-config.js"></script><script src="firebase-service.js"></script>
+</head>
+<body class="portal-page"><header class="portal-header"><div class="container portal-header-inner"><a href="index.html"><img src="assets/logo.png" alt="Chiquinha Transportes" class="portal-logo"></a><div class="portal-actions"><button class="btn btn-outline" id="theme-toggle"><i class="fa-solid fa-moon"></i></button><button class="btn btn-outline" id="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sair</button></div></div></header>
+<main class="portal-content"><div class="container"><div id="admin-message" class="portal-alert" style="display:none"></div><div class="portal-heading"><h1>Painel de Candidaturas</h1><p>Atualize o andamento dos processos seletivos e envie orientações aos candidatos.</p></div><div class="admin-toolbar"><strong id="total-count">Carregando candidaturas...</strong><select id="status-filter"><option value="todos">Todos os status</option><option value="recebida">Recebidas</option><option value="triagem">Em triagem</option><option value="entrevista">Entrevista</option><option value="aprovada">Aprovadas</option><option value="recusada">Encerradas</option></select></div><div id="admin-list" class="portal-grid"></div></div></main><script src="admin.js"></script></body></html>
