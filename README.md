@@ -309,7 +309,7 @@ RESEND_TO_EMAIL=umoliveiradev@gmail.com
 RESEND_FROM_EMAIL=onboarding@resend.dev
 ```
 
-Em produção, use um remetente de um domínio verificado no Resend. Nunca coloque `RESEND_API_KEY` no JavaScript do navegador.
+Em produção, use um remetente de um domínio verificado no Resend. Nunca coloque `RESEND_API_KEY` no JavaScript do navegador. Na Vercel, o endpoint é `api/send-application.js`; os anexos são limitados a 3MB para respeitar o limite de payload da Function.
 
 ---
 

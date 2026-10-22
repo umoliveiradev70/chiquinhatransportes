@@ -802,8 +802,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      showToast('Arquivo muito grande', 'O tamanho máximo permitido para o currículo é de 5MB.', 'error');
+    if (file.size > 3 * 1024 * 1024) {
+      showToast('Arquivo muito grande', 'O tamanho máximo permitido para o currículo é de 3MB.', 'error');
       resetDropzone();
       return;
     }
