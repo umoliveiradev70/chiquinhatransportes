@@ -233,3 +233,34 @@
   .admin-toolbar-controls { width: 100%; flex-direction: column; }
   .admin-search { min-width: 0; width: 100%; }
 }
+
+@media (max-width: 400px) {
+  .portal-content {
+    padding-top: 2rem;
+  }
+
+  .portal-logo {
+    width: 145px;
+  }
+
+  .admin-stats {
+    gap: 0.6rem;
+  }
+
+  .admin-stat-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.8rem;
+  }
+
+  .admin-toolbar-controls,
+  .admin-toolbar select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .application-card {
+    padding: 1rem;
+  }
+}
