@@ -50,8 +50,14 @@ module.exports = async function handler(req, res) {
     });
 
     if (!resendResponse.ok) {
-      console.error('Resend rejeitou o e-mail:', await resendResponse.text());
-      res.status(502).json({ error: 'O Resend não aceitou o envio.' });
+      const resendError = await resendResponse.text();
+      console.error('Resend rejeitou o e-mail:', resendError);
+      let detail = 'O Resend não aceitou o envio.';
+      try {
+        const parsedError = JSON.parse(resendError);
+        detail = parsedError.message || parsedError.name || detail;
+      } catch (error) {}
+      res.status(502).json({ error: `Resend: ${detail}` });
       return;
     }
 

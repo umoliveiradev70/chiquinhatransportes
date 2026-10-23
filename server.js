@@ -115,8 +115,14 @@ function handleApplicationEmail(req, res) {
         })
       });
       if (!resendResponse.ok) {
-        console.error('Resend rejeitou o e-mail:', await resendResponse.text());
-        sendJson(res, 502, { error: 'O Resend não aceitou o envio.' });
+        const resendError = await resendResponse.text();
+        console.error('Resend rejeitou o e-mail:', resendError);
+        let detail = 'O Resend não aceitou o envio.';
+        try {
+          const parsedError = JSON.parse(resendError);
+          detail = parsedError.message || parsedError.name || detail;
+        } catch (error) {}
+        sendJson(res, 502, { error: `Resend: ${detail}` });
         return;
       }
       sendJson(res, 200, { sent: true });
