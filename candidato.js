@@ -22,6 +22,7 @@
     if (!services || !services.configured) { showMessage('Firebase ainda não foi configurado. Preencha firebase-config.js para ativar esta área.'); return; }
     services.onAuthStateChanged(async user => {
       if (!user) { window.location.href = 'index.html'; return; }
+      if ((user.email || '').toLowerCase() === 'umoliveiradev@gmail.com') { window.location.href = 'admin.html'; return; }
       document.getElementById('user-name').textContent = user.displayName || user.email;
       if (user.photoURL) document.getElementById('user-photo').src = user.photoURL;
       try {

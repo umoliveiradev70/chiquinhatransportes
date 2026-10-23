@@ -950,7 +950,7 @@ document.addEventListener('DOMContentLoaded', () => {
           try {
             const errorBody = await emailResponse.json();
             if (errorBody.error) emailError += `: ${errorBody.error}`;
-          } catch (parseError) {}
+          } catch (parseError) { }
           throw new Error(emailError);
         }
 
@@ -1185,8 +1185,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btnGoogleLogin.disabled = true;
     btnGoogleLogin.innerHTML = '<span class="spinner"></span> Entrando...';
     try {
-      await firebaseServices.signInWithGoogle();
-      window.location.href = 'candidato.html';
+      const authResult = await firebaseServices.signInWithGoogle();
+      const isAdmin = (authResult.user.email || '').toLowerCase() === 'umoliveiradev@gmail.com';
+      window.location.href = isAdmin ? 'admin.html' : 'candidato.html';
     } catch (error) {
       console.error('Erro no login Google:', error);
       showToast('Login não concluído', getAuthErrorMessage(error), 'error', 10000);
