@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Processando... | Chiquinha Transportes</title>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get('mode');
+      const oobCode = params.get('oobCode') || params.get('code');
+      const apiKey = params.get('apiKey');
+
+      const query = new URLSearchParams();
+      if (oobCode) query.set('oobCode', oobCode);
+      if (apiKey) query.set('apiKey', apiKey);
+
+      if (mode === 'verifyEmail') {
+        window.location.replace('verificar-email.html?' + query.toString());
+      } else if (mode === 'resetPassword') {
+        window.location.replace('redefinir-senha.html?' + query.toString());
+      } else {
+        window.location.replace('index.html');
+      }
+    })();
+  </script>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding-top: 20vh; background: #0b0f19; color: #fff;">
+  <p>Redirecionando com segurança...</p>
+</body>
+</html>

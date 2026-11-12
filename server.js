@@ -77,7 +77,8 @@ const server = http.createServer((req, res) => {
 
 function handleApplicationEmail(req, res) {
   const resendApiKey = process.env.RESEND_API_KEY;
-  const adminEmail = process.env.RESEND_TO_EMAIL || 'umoliveiradev@gmail.com';
+  const defaultAdmins = ['umoliveiradev@gmail.com', 'chiquinhatransports@gmail.com'];
+  const adminRecipients = process.env.RESEND_TO_EMAIL ? [process.env.RESEND_TO_EMAIL] : defaultAdmins;
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
   if (!resendApiKey) {
@@ -107,7 +108,7 @@ function handleApplicationEmail(req, res) {
         headers: { Authorization: `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: fromEmail,
-          to: [adminEmail],
+          to: adminRecipients,
           reply_to: candidate.email,
           subject: `Nova candidatura: ${payload.jobTitle} - ${candidate.name}`,
           html: `<h2>Nova candidatura recebida</h2><p><strong>Vaga:</strong> ${escapeHtml(payload.jobTitle)}</p><p><strong>Candidato:</strong> ${escapeHtml(candidate.name)}</p><p><strong>E-mail:</strong> ${escapeHtml(candidate.email)}</p><p><strong>Telefone:</strong> ${escapeHtml(candidate.phone || '')}</p><p><strong>Cidade:</strong> ${escapeHtml(candidate.city || '')}</p><p><strong>CNH:</strong> ${escapeHtml(candidate.cnh || '')}</p><p><strong>Estado:</strong> ${escapeHtml(candidate.state || '')}</p><p><strong>Observações:</strong> ${escapeHtml(candidate.notes || 'Não informado')}</p>`,

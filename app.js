@@ -931,8 +931,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let submissionStage = 'login';
       try {
-        const authResult = await firebaseServices.signInWithGoogle();
-        const user = authResult.user;
+        let user = firebaseServices.auth.currentUser;
+        if (!user) {
+          const authResult = await firebaseServices.signInWithGoogle();
+          user = authResult.user;
+        } else if (!user.emailVerified) {
+          showToast('E-mail Não Verificado', 'Você precisa ativar seu e-mail antes de enviar candidaturas. Verifique o link recebido.', 'warning', 9000);
+          openLoginModal('login');
+          return;
+        }
         submissionStage = 'email';
         const fileContent = await readFileAsBase64(selectedFile);
         const emailResponse = await fetch('/api/send-application', {
@@ -999,13 +1006,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function getAuthErrorMessage(error) {
     const code = error && error.code ? error.code : '';
     const messages = {
-      'auth/unauthorized-domain': 'Este domínio da Vercel não está autorizado no Firebase Authentication.',
+      'auth/user-not-found': 'Nenhuma conta encontrada com este e-mail. Verifique o endereço digitado ou cadastre-se.',
+      'auth/wrong-password': 'Senha incorreta. Tente novamente ou use a opção de redefinição de senha.',
+      'auth/invalid-credential': 'E-mail ou senha incorretos. Por favor, confira suas credenciais.',
+      'auth/invalid-email': 'O endereço de e-mail informado é inválido.',
+      'auth/email-already-in-use': 'Este e-mail já está cadastrado. Faça login ou recupere sua senha.',
+      'auth/weak-password': 'A senha é muito curta. Crie uma senha com pelo menos 6 caracteres.',
+      'auth/missing-password': 'Por favor, digite sua senha.',
+      'auth/missing-email': 'Por favor, informe seu e-mail.',
+      'auth/user-disabled': 'Esta conta foi desativada pelo administrador.',
+      'auth/too-many-requests': 'Muitas tentativas com erro. Por segurança, aguarde alguns minutos e tente novamente.',
+      'auth/network-request-failed': 'Falha na conexão de rede. Verifique sua internet.',
+      'auth/unauthorized-domain': 'Este domínio não está autorizado no Firebase Authentication (configure Authorized Domains no Firebase Console).',
       'auth/popup-blocked': 'O navegador bloqueou a janela do Google. Permita pop-ups para este site.',
-      'auth/popup-closed-by-user': 'A janela de login foi fechada antes da conclusão.',
-      'auth/operation-not-allowed': 'O login com Google ainda não está ativado no Firebase.',
-      'auth/invalid-api-key': 'A API key do Firebase está inválida ou pertence a outro projeto.'
+      'auth/popup-closed-by-user': 'A janela de autenticação foi fechada antes da conclusão.',
+      'auth/operation-not-allowed': 'Este método de login (E-mail/Senha ou Google) ainda não foi ativado no Firebase Console.',
+      'auth/invalid-api-key': 'A chave de API do Firebase configurada é inválida ou pertence a outro projeto.'
     };
-    return messages[code] || `Verifique o login Google e tente novamente. Código: ${code || 'desconhecido'}`;
+    return messages[code] || error?.message || `Erro de autenticação. Código: ${code || 'desconhecido'}`;
   }
 
   function readFileAsBase64(file) {
@@ -1049,6 +1067,16 @@ document.addEventListener('DOMContentLoaded', () => {
         v = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
       }
       e.target.value = v;
+    });
+  }
+
+  const candPrivacyInput = document.getElementById('cand-privacy');
+  if (candPrivacyInput) {
+    candPrivacyInput.addEventListener('change', () => {
+      const errPrivacy = document.getElementById('error-cand-privacy');
+      if (candPrivacyInput.checked && errPrivacy) {
+        errPrivacy.classList.remove('show');
+      }
     });
   }
 
@@ -1151,7 +1179,136 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function openLoginModal() {
+  // ========================================================
+  // 9. BANCO DE TALENTOS & SISTEMA DE AUTENTICAÇÃO (FIREBASE)
+  // ========================================================
+  const authNavTabs = document.getElementById('auth-nav-tabs');
+  const tabBtnAuthLogin = document.getElementById('tab-btn-auth-login');
+  const tabBtnAuthSignup = document.getElementById('tab-btn-auth-signup');
+  const viewAuthLogin = document.getElementById('view-auth-login');
+  const viewAuthSignup = document.getElementById('view-auth-signup');
+  const viewAuthReset = document.getElementById('view-auth-reset');
+  const viewAuthVerify = document.getElementById('view-auth-verify');
+  const authModalTitle = document.getElementById('auth-modal-title');
+  const authModalSubtitle = document.getElementById('auth-modal-subtitle');
+
+  const formEmailLogin = document.getElementById('form-email-login');
+  const loginEmailInput = document.getElementById('login-email');
+  const loginPasswordInput = document.getElementById('login-password');
+  const btnSubmitEmailLogin = document.getElementById('btn-submit-email-login');
+  const loginSpinner = document.getElementById('login-spinner');
+  const btnLoginText = document.getElementById('btn-login-text');
+
+  const formEmailSignup = document.getElementById('form-email-signup');
+  const signupNameInput = document.getElementById('signup-name');
+  const signupEmailInput = document.getElementById('signup-email');
+  const signupPasswordInput = document.getElementById('signup-password');
+  const signupConfirmInput = document.getElementById('signup-password-confirm');
+  const btnSubmitEmailSignup = document.getElementById('btn-submit-email-signup');
+  const signupSpinner = document.getElementById('signup-spinner');
+  const btnSignupText = document.getElementById('btn-signup-text');
+  const btnGoogleSignup = document.getElementById('btn-google-signup');
+
+  const formEmailReset = document.getElementById('form-email-reset');
+  const resetEmailInput = document.getElementById('reset-email');
+  const btnSubmitReset = document.getElementById('btn-submit-reset');
+  const resetSpinner = document.getElementById('reset-spinner');
+  const btnResetText = document.getElementById('btn-reset-text');
+
+  const verifyEmailDisplay = document.getElementById('verify-email-display');
+  const btnCheckVerified = document.getElementById('btn-check-verified');
+  const verifyCheckSpinner = document.getElementById('verify-check-spinner');
+  const btnCheckVerifiedText = document.getElementById('btn-check-verified-text');
+  const btnResendVerification = document.getElementById('btn-resend-verification');
+  const resendSpinner = document.getElementById('resend-spinner');
+  const btnResendText = document.getElementById('btn-resend-text');
+  const btnVerifyBackToLogin = document.getElementById('btn-verify-back-to-login');
+
+  let pendingVerificationUser = null;
+  let pendingVerificationEmail = '';
+
+  const linkForgotPass = document.getElementById('link-forgot-pass');
+  const btnSwitchToSignup = document.getElementById('btn-switch-to-signup');
+  const btnSwitchToLogin = document.getElementById('btn-switch-to-login');
+  const btnResetToLogin = document.getElementById('btn-reset-to-login');
+
+  async function redirectAfterAuth(user) {
+    const email = (user && user.email ? user.email : '').toLowerCase();
+    const adminEmails = ['umoliveiradev@gmail.com', 'chiquinhatransports@gmail.com'];
+    let isAdmin = adminEmails.includes(email);
+    const firebaseServices = window.cqFirebase;
+    if (!isAdmin && firebaseServices && firebaseServices.db && user) {
+      try {
+        const adminDoc = await firebaseServices.db.collection('admins').doc(user.uid).get();
+        if (adminDoc.exists) isAdmin = true;
+      } catch (e) {
+        // Silencioso se não houver coleção ou permissão de admin
+      }
+    }
+    window.location.href = isAdmin ? 'admin.html' : 'candidato.html';
+  }
+
+  function clearAuthErrors() {
+    document.querySelectorAll('.auth-modal-body .field-error').forEach(el => {
+      el.classList.remove('show');
+    });
+  }
+
+  function switchAuthView(view) {
+    clearAuthErrors();
+    if (view === 'signup') {
+      if (authNavTabs) authNavTabs.style.display = 'flex';
+      if (tabBtnAuthLogin) tabBtnAuthLogin.classList.remove('active');
+      if (tabBtnAuthSignup) tabBtnAuthSignup.classList.add('active');
+      if (viewAuthLogin) viewAuthLogin.style.display = 'none';
+      if (viewAuthSignup) viewAuthSignup.style.display = 'block';
+      if (viewAuthReset) viewAuthReset.style.display = 'none';
+      if (viewAuthVerify) viewAuthVerify.style.display = 'none';
+      if (authModalTitle) authModalTitle.textContent = 'Criar Conta';
+      if (authModalSubtitle) authModalSubtitle.textContent = 'Cadastre-se para acompanhar vagas e candidaturas.';
+      if (signupNameInput) signupNameInput.focus();
+    } else if (view === 'reset') {
+      if (authNavTabs) authNavTabs.style.display = 'none';
+      if (viewAuthLogin) viewAuthLogin.style.display = 'none';
+      if (viewAuthSignup) viewAuthSignup.style.display = 'none';
+      if (viewAuthReset) viewAuthReset.style.display = 'block';
+      if (viewAuthVerify) viewAuthVerify.style.display = 'none';
+      if (authModalTitle) authModalTitle.textContent = 'Recuperar Senha';
+      if (authModalSubtitle) authModalSubtitle.textContent = 'Redefina sua senha de acesso com segurança.';
+      if (resetEmailInput) resetEmailInput.focus();
+    } else if (view === 'verify') {
+      if (authNavTabs) authNavTabs.style.display = 'none';
+      if (viewAuthLogin) viewAuthLogin.style.display = 'none';
+      if (viewAuthSignup) viewAuthSignup.style.display = 'none';
+      if (viewAuthReset) viewAuthReset.style.display = 'none';
+      if (viewAuthVerify) viewAuthVerify.style.display = 'block';
+      if (authModalTitle) authModalTitle.textContent = 'Verificação de E-mail';
+      if (authModalSubtitle) authModalSubtitle.textContent = 'Confirmação obrigatória para ativação de conta.';
+    } else {
+      // Padrão: view login
+      if (authNavTabs) authNavTabs.style.display = 'flex';
+      if (tabBtnAuthLogin) tabBtnAuthLogin.classList.add('active');
+      if (tabBtnAuthSignup) tabBtnAuthSignup.classList.remove('active');
+      if (viewAuthLogin) viewAuthLogin.style.display = 'block';
+      if (viewAuthSignup) viewAuthSignup.style.display = 'none';
+      if (viewAuthReset) viewAuthReset.style.display = 'none';
+      if (viewAuthVerify) viewAuthVerify.style.display = 'none';
+      if (authModalTitle) authModalTitle.textContent = 'Área do Candidato';
+      if (authModalSubtitle) authModalSubtitle.textContent = 'Acompanhe suas candidaturas e mantenha seus dados sempre atualizados.';
+      if (loginEmailInput) loginEmailInput.focus();
+    }
+  }
+
+  function openLoginModal(view = 'login') {
+    const firebaseServices = window.cqFirebase;
+    // Se o usuário já estiver conectado E com e-mail verificado, vai direto para sua área
+    if (firebaseServices && firebaseServices.configured && firebaseServices.auth && firebaseServices.auth.currentUser) {
+      if (firebaseServices.auth.currentUser.emailVerified) {
+        redirectAfterAuth(firebaseServices.auth.currentUser);
+        return;
+      }
+    }
+    switchAuthView(view);
     candidateLoginModal.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
@@ -1159,44 +1316,349 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeLoginModal() {
     candidateLoginModal.classList.remove('active');
     document.body.style.overflow = '';
+    clearAuthErrors();
   }
 
-  if (btnCandidateArea) btnCandidateArea.addEventListener('click', openLoginModal);
+  // Alternância de abas e botões de navegação
+  if (tabBtnAuthLogin) tabBtnAuthLogin.addEventListener('click', () => switchAuthView('login'));
+  if (tabBtnAuthSignup) tabBtnAuthSignup.addEventListener('click', () => switchAuthView('signup'));
+  if (btnSwitchToSignup) btnSwitchToSignup.addEventListener('click', () => switchAuthView('signup'));
+  if (btnSwitchToLogin) btnSwitchToLogin.addEventListener('click', () => switchAuthView('login'));
+  if (linkForgotPass) linkForgotPass.addEventListener('click', () => switchAuthView('reset'));
+  if (btnResetToLogin) btnResetToLogin.addEventListener('click', () => switchAuthView('login'));
+
+  // Disparadores de abertura da Área do Candidato
+  if (btnCandidateArea) btnCandidateArea.addEventListener('click', () => openLoginModal('login'));
   if (btnCandidateAreaMobile) btnCandidateAreaMobile.addEventListener('click', () => {
     closeDrawer();
-    openLoginModal();
+    openLoginModal('login');
   });
-  if (btnFooterCandidateLogin) btnFooterCandidateLogin.addEventListener('click', openLoginModal);
+  if (btnFooterCandidateLogin) btnFooterCandidateLogin.addEventListener('click', () => openLoginModal('login'));
 
   const btnFooterCandidateArea = document.getElementById('footer-candidate-area');
   if (btnFooterCandidateArea) btnFooterCandidateArea.addEventListener('click', (e) => {
     e.preventDefault();
-    openLoginModal();
+    openLoginModal('login');
   });
   if (closeLoginBtn) closeLoginBtn.addEventListener('click', closeLoginModal);
 
-  async function loginWithGoogle() {
+  // Configuração dos botões de mostrar/ocultar senha
+  function initPasswordToggle(btnId, inputId) {
+    const btn = document.getElementById(btnId);
+    const input = document.getElementById(inputId);
+    if (!btn || !input) return;
+    btn.addEventListener('click', () => {
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.className = isPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+      }
+    });
+  }
+
+  initPasswordToggle('toggle-login-pass', 'login-password');
+  initPasswordToggle('toggle-signup-pass', 'signup-password');
+  initPasswordToggle('toggle-confirm-pass', 'signup-password-confirm');
+
+  // 1. Login com E-mail e Senha
+  if (formEmailLogin) {
+    formEmailLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthErrors();
+
+      const email = loginEmailInput.value.trim();
+      const password = loginPasswordInput.value;
+      let hasError = false;
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('error-login-email').classList.add('show');
+        loginEmailInput.focus();
+        hasError = true;
+      }
+      if (!password) {
+        document.getElementById('error-login-password').classList.add('show');
+        if (!hasError) loginPasswordInput.focus();
+        hasError = true;
+      }
+      if (hasError) return;
+
+      const firebaseServices = window.cqFirebase;
+      if (!firebaseServices || !firebaseServices.configured) {
+        showToast('Firebase não configurado', 'Configure o arquivo firebase-config.js para realizar login.', 'error', 8000);
+        return;
+      }
+
+      btnSubmitEmailLogin.disabled = true;
+      if (loginSpinner) loginSpinner.style.display = 'inline-block';
+      if (btnLoginText) btnLoginText.innerHTML = 'Entrando...';
+
+      try {
+        const cred = await firebaseServices.signInWithEmail(email, password);
+        // Exigência estrita antifraude: e-mail DEVE ser verificado antes de permitir acesso
+        if (!cred.user.emailVerified) {
+          pendingVerificationUser = cred.user;
+          pendingVerificationEmail = email;
+          if (verifyEmailDisplay) verifyEmailDisplay.textContent = email;
+          switchAuthView('verify');
+          showToast('E-mail Não Verificado', 'Você precisa confirmar seu e-mail antes de acessar. Enviamos um link de validação para ' + email, 'warning', 10000);
+          btnSubmitEmailLogin.disabled = false;
+          if (loginSpinner) loginSpinner.style.display = 'none';
+          if (btnLoginText) btnLoginText.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar com E-mail';
+          return;
+        }
+
+        showToast('Login realizado com sucesso!', 'Redirecionando para seu painel...', 'success', 3000);
+        await redirectAfterAuth(cred.user);
+      } catch (error) {
+        console.error('Erro no login por e-mail:', error);
+        showToast('Não foi possível entrar', getAuthErrorMessage(error), 'error', 9000);
+        btnSubmitEmailLogin.disabled = false;
+        if (loginSpinner) loginSpinner.style.display = 'none';
+        if (btnLoginText) btnLoginText.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar com E-mail';
+      }
+    });
+  }
+
+  // 2. Cadastro com E-mail e Senha (com verificação obrigatória de e-mail)
+  if (formEmailSignup) {
+    formEmailSignup.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthErrors();
+
+      const name = signupNameInput.value.trim();
+      const email = signupEmailInput.value.trim();
+      const password = signupPasswordInput.value;
+      const confirm = signupConfirmInput.value;
+      let hasError = false;
+
+      if (!name || name.length < 3) {
+        document.getElementById('error-signup-name').classList.add('show');
+        signupNameInput.focus();
+        hasError = true;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('error-signup-email').classList.add('show');
+        if (!hasError) signupEmailInput.focus();
+        hasError = true;
+      }
+      if (!password || password.length < 6) {
+        document.getElementById('error-signup-password').classList.add('show');
+        if (!hasError) signupPasswordInput.focus();
+        hasError = true;
+      }
+      if (password !== confirm) {
+        document.getElementById('error-signup-confirm').classList.add('show');
+        if (!hasError) signupConfirmInput.focus();
+        hasError = true;
+      }
+      if (hasError) return;
+
+      const firebaseServices = window.cqFirebase;
+      if (!firebaseServices || !firebaseServices.configured) {
+        showToast('Firebase não configurado', 'Configure o arquivo firebase-config.js para cadastrar contas.', 'error', 8000);
+        return;
+      }
+
+      btnSubmitEmailSignup.disabled = true;
+      if (signupSpinner) signupSpinner.style.display = 'inline-block';
+      if (btnSignupText) btnSignupText.innerHTML = 'Criando e enviando validação...';
+
+      try {
+        const cred = await firebaseServices.signUpWithEmail(email, password, name);
+        pendingVerificationUser = cred.user;
+        pendingVerificationEmail = email;
+        if (verifyEmailDisplay) verifyEmailDisplay.textContent = email;
+        
+        // Limpa campos do cadastro
+        signupPasswordInput.value = '';
+        signupConfirmInput.value = '';
+
+        switchAuthView('verify');
+        showToast(
+          'Conta Criada! Confirme seu E-mail',
+          `Enviamos um link de ativação para ${email}. Você deve clicar nele antes de acessar a plataforma.`,
+          'success',
+          12000
+        );
+      } catch (error) {
+        console.error('Erro no cadastro por e-mail:', error);
+        showToast('Não foi possível cadastrar', getAuthErrorMessage(error), 'error', 9000);
+      } finally {
+        btnSubmitEmailSignup.disabled = false;
+        if (signupSpinner) signupSpinner.style.display = 'none';
+        if (btnSignupText) btnSignupText.innerHTML = '<i class="fa-solid fa-user-plus"></i> Criar Minha Conta';
+      }
+    });
+  }
+
+  // 3. Recuperação de Senha
+  if (formEmailReset) {
+    formEmailReset.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthErrors();
+
+      const email = resetEmailInput.value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('error-reset-email').classList.add('show');
+        resetEmailInput.focus();
+        return;
+      }
+
+      const firebaseServices = window.cqFirebase;
+      if (!firebaseServices || !firebaseServices.configured) {
+        showToast('Firebase não configurado', 'Configure o arquivo firebase-config.js para redefinir senha.', 'error', 8000);
+        return;
+      }
+
+      btnSubmitReset.disabled = true;
+      if (resetSpinner) resetSpinner.style.display = 'inline-block';
+      if (btnResetText) btnResetText.innerHTML = 'Enviando link...';
+
+      try {
+        await firebaseServices.sendPasswordReset(email);
+        showToast(
+          'E-mail Enviado!',
+          'Enviamos as instruções de recuperação para seu e-mail. Verifique a caixa de entrada e spam.',
+          'success',
+          10000
+        );
+        resetEmailInput.value = '';
+        btnSubmitReset.disabled = false;
+        if (resetSpinner) resetSpinner.style.display = 'none';
+        if (btnResetText) btnResetText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação';
+        switchAuthView('login');
+      } catch (error) {
+        console.error('Erro na recuperação de senha:', error);
+        showToast('Falha no envio', getAuthErrorMessage(error), 'error', 9000);
+        btnSubmitReset.disabled = false;
+        if (resetSpinner) resetSpinner.style.display = 'none';
+        if (btnResetText) btnResetText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação';
+      }
+    });
+  }
+
+  // 4. Login com Google (Mantido para botões de login e de cadastro)
+  async function loginWithGoogle(triggerBtn) {
     const firebaseServices = window.cqFirebase;
     if (!firebaseServices || !firebaseServices.configured) {
       showToast('Firebase não configurado', 'Configure o arquivo firebase-config.js para ativar o login Google.', 'error', 8000);
       return;
     }
 
-    btnGoogleLogin.disabled = true;
-    btnGoogleLogin.innerHTML = '<span class="spinner"></span> Entrando...';
+    const originalHtml = triggerBtn ? triggerBtn.innerHTML : '';
+    if (triggerBtn) {
+      triggerBtn.disabled = true;
+      triggerBtn.innerHTML = '<span class="spinner"></span> Conectando com Google...';
+    }
+
     try {
       const authResult = await firebaseServices.signInWithGoogle();
-      const isAdmin = (authResult.user.email || '').toLowerCase() === 'umoliveiradev@gmail.com';
-      window.location.href = isAdmin ? 'admin.html' : 'candidato.html';
+      showToast('Login com Google concluído!', 'Redirecionando...', 'success', 3000);
+      await redirectAfterAuth(authResult.user);
     } catch (error) {
       console.error('Erro no login Google:', error);
       showToast('Login não concluído', getAuthErrorMessage(error), 'error', 10000);
-      btnGoogleLogin.disabled = false;
-      btnGoogleLogin.innerHTML = '<i class="fa-brands fa-google"></i> Entrar com Google';
+      if (triggerBtn) {
+        triggerBtn.disabled = false;
+        triggerBtn.innerHTML = originalHtml;
+      }
     }
   }
 
-  if (btnGoogleLogin) btnGoogleLogin.addEventListener('click', loginWithGoogle);
+  if (btnGoogleLogin) btnGoogleLogin.addEventListener('click', () => loginWithGoogle(btnGoogleLogin));
+  if (btnGoogleSignup) btnGoogleSignup.addEventListener('click', () => loginWithGoogle(btnGoogleSignup));
+
+  // 5. Verificação Obrigatória de E-mail
+  if (btnCheckVerified) {
+    btnCheckVerified.addEventListener('click', async () => {
+      const firebaseServices = window.cqFirebase;
+      const user = pendingVerificationUser || (firebaseServices && firebaseServices.auth ? firebaseServices.auth.currentUser : null);
+
+      if (!user) {
+        showToast('Sessão expirada', 'Por favor, informe seu e-mail e senha novamente na tela de login.', 'info', 7000);
+        switchAuthView('login');
+        return;
+      }
+
+      btnCheckVerified.disabled = true;
+      if (verifyCheckSpinner) verifyCheckSpinner.style.display = 'inline-block';
+      if (btnCheckVerifiedText) btnCheckVerifiedText.innerHTML = 'Verificando status...';
+
+      try {
+        await user.reload();
+        if (user.emailVerified) {
+          showToast('E-mail Confirmado com Sucesso!', 'Sua conta está ativa. Redirecionando...', 'success', 3500);
+          await redirectAfterAuth(user);
+        } else {
+          showToast(
+            'E-mail Ainda Não Confirmado',
+            'O link enviado para ' + (user.email || pendingVerificationEmail) + ' ainda não foi ativado. Abra seu e-mail (e a pasta de spam) e clique no link de ativação.',
+            'error',
+            10000
+          );
+        }
+      } catch (error) {
+        console.error('Erro ao verificar status do e-mail:', error);
+        showToast('Falha ao checar', 'Não foi possível verificar. Tente fazer login novamente com sua senha.', 'error', 8000);
+      } finally {
+        btnCheckVerified.disabled = false;
+        if (verifyCheckSpinner) verifyCheckSpinner.style.display = 'none';
+        if (btnCheckVerifiedText) btnCheckVerifiedText.innerHTML = '<i class="fa-solid fa-check-double"></i> Já confirmei meu e-mail';
+      }
+    });
+  }
+
+  if (btnResendVerification) {
+    btnResendVerification.addEventListener('click', async () => {
+      const firebaseServices = window.cqFirebase;
+      const user = pendingVerificationUser || (firebaseServices && firebaseServices.auth ? firebaseServices.auth.currentUser : null);
+
+      if (!user) {
+        showToast('Sessão expirada', 'Faça login com seu e-mail e senha para reenviar o link.', 'info', 7000);
+        switchAuthView('login');
+        return;
+      }
+
+      btnResendVerification.disabled = true;
+      if (resendSpinner) resendSpinner.style.display = 'inline-block';
+      if (btnResendText) btnResendText.innerHTML = 'Reenviando link...';
+
+      try {
+        await user.sendEmailVerification();
+        showToast(
+          'Novo Link Enviado!',
+          'Enviamos um novo e-mail de confirmação para ' + (user.email || pendingVerificationEmail) + '. Não esqueça de verificar a caixa de Spam.',
+          'success',
+          10000
+        );
+      } catch (error) {
+        console.error('Erro ao reenviar verificação:', error);
+        showToast('Não foi possível reenviar', getAuthErrorMessage(error), 'error', 9000);
+      } finally {
+        btnResendVerification.disabled = false;
+        if (resendSpinner) resendSpinner.style.display = 'none';
+        if (btnResendText) btnResendText.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Reenviar link de confirmação';
+      }
+    });
+  }
+
+  if (btnVerifyBackToLogin) {
+    btnVerifyBackToLogin.addEventListener('click', () => {
+      switchAuthView('login');
+    });
+  }
+
+  // Abrir modal automaticamente se solicitado via URL (?auth=required ou ?login=1 ou ?verify=required ou hash #login)
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('verify') === 'required') {
+      openLoginModal('login');
+      showToast('Confirmação Obrigatória', 'Você precisa confirmar seu e-mail antes de acessar a Área do Candidato.', 'warning', 10000);
+    } else if (urlParams.get('auth') || urlParams.get('login') || window.location.hash === '#login') {
+      openLoginModal('login');
+    }
+  } catch (e) { }
 
   // ========================================================
   // 10. FAQ ACCORDION

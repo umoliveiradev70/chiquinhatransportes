@@ -73,12 +73,144 @@
   }
 
   async function loadApplications() { const snapshot = await services.db.collection('applications').get(); applications = snapshot.docs.sort((a, b) => (b.data().createdAt?.seconds || 0) - (a.data().createdAt?.seconds || 0)); updateStats(); render(); }
+  let currentAdminUser = null;
+
+  function initAdminProfileModal() {
+    const modal = document.getElementById('admin-profile-modal');
+    const openBtn = document.getElementById('btn-open-admin-profile');
+    const closeBtn = document.getElementById('close-admin-profile-btn');
+    const alertBox = document.getElementById('admin-profile-alert');
+    const nameInput = document.getElementById('admin-name-input');
+    const emailInput = document.getElementById('admin-email-input');
+
+    function showAlert(text, type = 'success') {
+      alertBox.textContent = text;
+      alertBox.className = 'portal-alert ' + (type === 'success' ? 'portal-alert-success' : 'portal-alert-danger');
+      alertBox.style.display = 'block';
+      setTimeout(() => { alertBox.style.display = 'none'; }, 6000);
+    }
+
+    function openModal() {
+      if (currentAdminUser) {
+        nameInput.value = currentAdminUser.displayName || '';
+        emailInput.value = currentAdminUser.email || '';
+      }
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      alertBox.style.display = 'none';
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    window.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    function bindEye(btnId, inputId) {
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(inputId);
+      if (!btn || !input) return;
+      btn.addEventListener('click', () => {
+        const isPass = input.type === 'password';
+        input.type = isPass ? 'text' : 'password';
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = isPass ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+      });
+    }
+    bindEye('toggle-admin-pass', 'admin-new-pass');
+    bindEye('toggle-admin-confirm', 'admin-confirm-pass');
+
+    // 1. Atualizar Nome do Admin
+    const formAdminName = document.getElementById('form-admin-name');
+    const btnSaveName = document.getElementById('btn-save-admin-name');
+    const spinnerName = document.getElementById('admin-name-spinner');
+    const textName = document.getElementById('btn-save-admin-name-text');
+
+    if (formAdminName) {
+      formAdminName.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newName = nameInput.value.trim();
+        if (!newName || newName.length < 3) {
+          showAlert('Por favor, informe seu nome completo.', 'error');
+          return;
+        }
+        btnSaveName.disabled = true;
+        spinnerName.style.display = 'inline-block';
+        textName.textContent = 'Salvando...';
+
+        try {
+          await services.updateUserProfile({ displayName: newName });
+          showAlert('Nome atualizado com sucesso!', 'success');
+        } catch (error) {
+          console.error(error);
+          showAlert('Não foi possível atualizar o nome.', 'error');
+        } finally {
+          btnSaveName.disabled = false;
+          spinnerName.style.display = 'none';
+          textName.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Nome';
+        }
+      });
+    }
+
+    // 2. Alterar Senha do Admin
+    const formAdminPass = document.getElementById('form-admin-password');
+    const passInput = document.getElementById('admin-new-pass');
+    const confirmInput = document.getElementById('admin-confirm-pass');
+    const btnSavePass = document.getElementById('btn-save-admin-pass');
+    const spinnerPass = document.getElementById('admin-pass-spinner');
+    const textPass = document.getElementById('btn-save-admin-pass-text');
+
+    if (formAdminPass) {
+      formAdminPass.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newPass = passInput.value;
+        const confirmPass = confirmInput.value;
+
+        if (!newPass || newPass.length < 6) {
+          showAlert('A nova senha deve ter no mínimo 6 dígitos.', 'error');
+          return;
+        }
+        if (newPass !== confirmPass) {
+          showAlert('A confirmação de senha não coincide.', 'error');
+          return;
+        }
+
+        btnSavePass.disabled = true;
+        spinnerPass.style.display = 'inline-block';
+        textPass.textContent = 'Atualizando senha...';
+
+        try {
+          await services.updateUserPassword(newPass);
+          passInput.value = '';
+          confirmInput.value = '';
+          showAlert('Senha alterada com sucesso!', 'success');
+        } catch (error) {
+          console.error(error);
+          if (error.code === 'auth/requires-recent-login') {
+            showAlert('Por motivos de segurança, saia e faça login novamente para trocar sua senha.', 'error');
+          } else {
+            showAlert(error.message || 'Falha ao alterar senha.', 'error');
+          }
+        } finally {
+          btnSavePass.disabled = false;
+          spinnerPass.style.display = 'none';
+          textPass.innerHTML = '<i class="fa-solid fa-key"></i> Salvar Nova Senha';
+        }
+      });
+    }
+  }
+
   function init() {
     setupDashboard();
+    initAdminProfileModal();
     if (!services || !services.configured) { showMessage('Firebase ainda não foi configurado.'); return; }
     services.onAuthStateChanged(async user => {
-      if (!user) { await services.signInWithGoogle().catch(() => { window.location.href = 'index.html'; }); return; }
-      try { const isAdminEmail = (user.email || '').toLowerCase() === 'umoliveiradev@gmail.com'; const adminDoc = await services.db.collection('admins').doc(user.uid).get(); if (!isAdminEmail && !adminDoc.exists) throw new Error('not-admin'); await loadApplications(); }
+      if (!user) { window.location.href = 'index.html?login=admin'; return; }
+      currentAdminUser = user;
+      try { const adminEmails = ['umoliveiradev@gmail.com', 'chiquinhatransports@gmail.com']; const isAdminEmail = adminEmails.includes((user.email || '').toLowerCase()); const adminDoc = await services.db.collection('admins').doc(user.uid).get(); if (!isAdminEmail && !adminDoc.exists) throw new Error('not-admin'); await loadApplications(); }
       catch (error) { console.error(error); showMessage('Acesso negado. Este usuário não está autorizado como administrador.'); }
     });
   }

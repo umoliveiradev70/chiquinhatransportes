@@ -428,6 +428,14 @@
 
   <!-- Footer -->
   <footer class="main-footer">
+    <div class="container">
+      <!-- Aviso de Segurança e Prevenção a Golpes -->
+      <div class="footer-security-banner">
+        <i class="fa-solid fa-shield-halved text-gold"></i>
+        <span><strong>Aviso Oficial de Segurança:</strong> A Chiquinha Transportes <u>não cobra qualquer taxa</u>, depósito ou valor via PIX em nenhuma etapa de seus processos seletivos. Nossas vagas são 100% gratuitas. Caso receba mensagens solicitando pagamentos, denuncie pelo nosso canal oficial.</span>
+      </div>
+    </div>
+
     <div class="container footer-top">
       <div class="footer-col brand-col">
         <div class="footer-logo-wrapper">
@@ -455,19 +463,25 @@
           <li><i class="fa-solid fa-location-dot"></i> Rodovia Fernão Dias, BR-381 - Polo Logístico, Pouso Alegre - MG</li>
           <li><i class="fa-solid fa-envelope"></i> <a href="mailto:chiquinhatransports@gmail.com" style="color: inherit;">chiquinhatransports@gmail.com</a></li>
           <li><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/5535997472363" target="_blank" rel="noopener noreferrer" style="color: inherit;">(35) 99747-2363</a></li>
+          <li><i class="fa-solid fa-clock"></i> Segunda a Sexta, das 08h às 18h</li>
         </ul>
       </div>
 
     </div>
 
     <div class="container footer-bottom">
-      <p>&copy; <span id="current-year">2026</span> Chiquinha Transportes Rodoviários Ltda. Todos os direitos reservados.</p>
+      <div>
+        <p>&copy; <span id="current-year">2026</span> <strong>Chiquinha Transportes Rodoviários Ltda.</strong> Todos os direitos reservados.</p>
+        <p class="footer-corporate-info">
+          CNPJ: 00.000.000/0001-00 • Sede: Rodovia Fernão Dias, BR-381 - Polo Logístico, Pouso Alegre - MG • CEP: 37550-000
+        </p>
+      </div>
       <div class="footer-legal-links">
-        <a href="#">Privacidade & LGPD</a>
+        <a href="privacidade.html">Privacidade & LGPD</a>
         <span>•</span>
-        <a href="#">Termos de Uso</a>
+        <a href="termos.html">Termos de Uso</a>
         <span>•</span>
-        <a href="#">Canal de Ética</a>
+        <a href="termos.html#canal-etica">Canal de Ética</a>
       </div>
     </div>
   </footer>
@@ -628,14 +642,22 @@
               <textarea id="cand-notes" rows="3" placeholder="Conte brevemente sobre seus objetivos ou rotas habituais..."></textarea>
             </div>
 
-            <!-- Privacy Acceptance -->
+            <!-- Privacy Acceptance (Em estrita conformidade com o Art. 8º da LGPD) -->
             <div class="form-checkbox">
-              <input type="checkbox" id="cand-privacy" required checked>
+              <input type="checkbox" id="cand-privacy" required>
               <label for="cand-privacy">
-                Concordo com o tratamento dos meus dados para fins exclusivos deste processo seletivo, em conformidade com a LGPD (Lei nº 13.709/2018).
+                Declaro que li e concordo com a <a href="privacidade.html" target="_blank" class="legal-link">Política de Privacidade & LGPD</a> e autorizo o tratamento dos meus dados pessoais para fins exclusivos deste processo seletivo e inclusão no banco de talentos (Lei nº 13.709/2018).
               </label>
             </div>
-            <span class="field-error" id="error-cand-privacy">Você deve aceitar os termos de privacidade</span>
+            <span class="field-error" id="error-cand-privacy">Você deve ler e aceitar a Política de Privacidade para enviar sua candidatura</span>
+
+            <!-- Aviso Oficial de Segurança Anticobrança / Antifraude -->
+            <div class="anti-fraud-box">
+              <i class="fa-solid fa-shield-halved text-gold"></i>
+              <div>
+                <strong>Aviso de Segurança:</strong> A Chiquinha Transportes <u>não cobra nenhuma taxa</u> de inscrição, material, treinamento ou exames em processos seletivos. Nossas vagas são 100% gratuitas.
+              </div>
+            </div>
 
             <div class="modal-footer form-footer">
               <button type="button" class="btn btn-outline" id="btn-cancel-application">Cancelar</button>
@@ -658,30 +680,213 @@
   </div>
 
   <!-- ======================================================== -->
-  <!-- MODAL 3: ÁREA DO CANDIDATO / LOGIN                       -->
+  <!-- MODAL 3: ÁREA DO CANDIDATO / LOGIN E CADASTRO             -->
   <!-- ======================================================== -->
   <div class="modal-backdrop" id="candidate-login-modal">
-    <div class="modal-card modal-card-sm">
+    <div class="modal-card modal-card-sm modal-card-auth">
       <button class="modal-close-btn" id="close-login-btn" aria-label="Fechar">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <div class="modal-header text-center">
+      <div class="modal-header text-center pb-2">
         <div class="login-brand-icon">
           <i class="fa-solid fa-user-shield text-gold"></i>
         </div>
-        <h2 class="modal-title">Área do Candidato</h2>
-        <p class="modal-subtitle">Acompanhe suas candidaturas e mantenha seus dados sempre atualizados.</p>
+        <h2 class="modal-title" id="auth-modal-title">Área do Candidato</h2>
+        <p class="modal-subtitle" id="auth-modal-subtitle">Acompanhe suas candidaturas e mantenha seus dados sempre atualizados.</p>
       </div>
 
-      <div class="modal-body">
-        <div class="google-login-panel">
-          <p>Entre com sua conta Google para consultar suas candidaturas, documentos e atualizações do processo seletivo.</p>
-          <button type="button" class="btn btn-primary w-100" id="btn-google-login">
-            <i class="fa-brands fa-google"></i> Entrar com Google
+      <!-- Abas de navegação: Entrar / Criar Conta -->
+      <div class="auth-nav-tabs" id="auth-nav-tabs">
+        <button type="button" class="auth-nav-tab active" id="tab-btn-auth-login">
+          <i class="fa-solid fa-right-to-bracket"></i> Entrar
+        </button>
+        <button type="button" class="auth-nav-tab" id="tab-btn-auth-signup">
+          <i class="fa-solid fa-user-plus"></i> Criar Conta
+        </button>
+      </div>
+
+      <div class="modal-body auth-modal-body">
+        <!-- PAINEL 1: LOGIN (EMAIL/SENHA OU GOOGLE) -->
+        <div class="auth-view active" id="view-auth-login">
+          <form id="form-email-login" class="auth-form" novalidate>
+            <div class="form-field">
+              <label for="login-email">E-mail <span class="required">*</span></label>
+              <div class="login-input-wrap">
+                <i class="fa-regular fa-envelope input-icon"></i>
+                <input type="email" id="login-email" placeholder="seu.email@exemplo.com" required autocomplete="email">
+              </div>
+              <span class="field-error" id="error-login-email">Informe seu e-mail</span>
+            </div>
+
+            <div class="form-field">
+              <div class="login-field-header">
+                <label for="login-password">Senha <span class="required">*</span></label>
+                <button type="button" class="forgot-pass-link" id="link-forgot-pass">Esqueceu a senha?</button>
+              </div>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="login-password" placeholder="Sua senha" required autocomplete="current-password">
+                <button type="button" class="btn-toggle-eye" id="toggle-login-pass" aria-label="Mostrar ou ocultar senha" tabindex="-1">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <span class="field-error" id="error-login-password">Informe sua senha</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" id="btn-submit-email-login">
+              <span class="spinner" id="login-spinner" style="display: none;"></span>
+              <span id="btn-login-text"><i class="fa-solid fa-right-to-bracket"></i> Entrar com E-mail</span>
+            </button>
+          </form>
+
+          <div class="login-divider">
+            <span>ou continue com</span>
+          </div>
+
+          <button type="button" class="btn btn-outline btn-google-social w-100" id="btn-google-login">
+            <i class="fa-brands fa-google text-gold"></i> Entrar com Google
           </button>
-          <p class="login-security-note"><i class="fa-solid fa-lock"></i> Login seguro pelo Firebase Authentication.</p>
+
+          <p class="login-footer-switch">
+            Não tem uma conta? <button type="button" class="btn-switch-auth" id="btn-switch-to-signup">Cadastre-se gratuitamente</button>
+          </p>
         </div>
+
+        <!-- PAINEL 2: CADASTRO COM EMAIL E SENHA -->
+        <div class="auth-view" id="view-auth-signup" style="display: none;">
+          <form id="form-email-signup" class="auth-form" novalidate>
+            <div class="form-field">
+              <label for="signup-name">Nome Completo <span class="required">*</span></label>
+              <div class="login-input-wrap">
+                <i class="fa-regular fa-user input-icon"></i>
+                <input type="text" id="signup-name" placeholder="Ex: João da Silva" required autocomplete="name">
+              </div>
+              <span class="field-error" id="error-signup-name">Informe seu nome completo</span>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-email">E-mail <span class="required">*</span></label>
+              <div class="login-input-wrap">
+                <i class="fa-regular fa-envelope input-icon"></i>
+                <input type="email" id="signup-email" placeholder="seu.email@exemplo.com" required autocomplete="email">
+              </div>
+              <span class="field-error" id="error-signup-email">Informe um e-mail válido</span>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-password">Senha (mínimo 6 caracteres) <span class="required">*</span></label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="signup-password" placeholder="Mínimo 6 dígitos" minlength="6" required autocomplete="new-password">
+                <button type="button" class="btn-toggle-eye" id="toggle-signup-pass" aria-label="Mostrar ou ocultar senha" tabindex="-1">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <span class="field-error" id="error-signup-password">A senha deve ter pelo menos 6 caracteres</span>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-password-confirm">Confirmar Senha <span class="required">*</span></label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-shield-halved input-icon"></i>
+                <input type="password" id="signup-password-confirm" placeholder="Repita sua senha" minlength="6" required autocomplete="new-password">
+                <button type="button" class="btn-toggle-eye" id="toggle-confirm-pass" aria-label="Mostrar ou ocultar senha" tabindex="-1">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <span class="field-error" id="error-signup-confirm">As senhas não coincidem</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" id="btn-submit-email-signup">
+              <span class="spinner" id="signup-spinner" style="display: none;"></span>
+              <span id="btn-signup-text"><i class="fa-solid fa-user-plus"></i> Criar Minha Conta</span>
+            </button>
+          </form>
+
+          <div class="login-divider">
+            <span>ou cadastre-se com</span>
+          </div>
+
+          <button type="button" class="btn btn-outline btn-google-social w-100" id="btn-google-signup">
+            <i class="fa-brands fa-google text-gold"></i> Cadastrar com Google
+          </button>
+
+          <p class="login-footer-switch">
+            Já possui uma conta? <button type="button" class="btn-switch-auth" id="btn-switch-to-login">Fazer login</button>
+          </p>
+        </div>
+
+        <!-- PAINEL 3: RECUPERAÇÃO DE SENHA -->
+        <div class="auth-view" id="view-auth-reset" style="display: none;">
+          <p class="reset-intro-text">
+            Digite seu e-mail cadastrado e enviaremos um link seguro para você redefinir sua senha.
+          </p>
+
+          <form id="form-email-reset" class="auth-form" novalidate>
+            <div class="form-field">
+              <label for="reset-email">E-mail Cadastrado <span class="required">*</span></label>
+              <div class="login-input-wrap">
+                <i class="fa-regular fa-envelope input-icon"></i>
+                <input type="email" id="reset-email" placeholder="seu.email@exemplo.com" required autocomplete="email">
+              </div>
+              <span class="field-error" id="error-reset-email">Informe seu e-mail cadastrado</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" id="btn-submit-reset">
+              <span class="spinner" id="reset-spinner" style="display: none;"></span>
+              <span id="btn-reset-text"><i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação</span>
+            </button>
+          </form>
+
+          <p class="login-footer-switch">
+            <button type="button" class="btn-switch-auth" id="btn-reset-to-login">
+              <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+            </button>
+          </p>
+        </div>
+
+        <!-- PAINEL 4: VERIFICAÇÃO OBRIGATÓRIA DE EMAIL -->
+        <div class="auth-view" id="view-auth-verify" style="display: none;">
+          <div class="verify-panel-content">
+            <div class="verify-icon-wrap">
+              <i class="fa-solid fa-envelope-circle-check text-gold"></i>
+            </div>
+            <h3 class="verify-heading">Confirme seu E-mail</h3>
+            <p class="verify-text">
+              Enviamos um link de ativação para:<br>
+              <strong id="verify-email-display" class="verify-email-highlight">seu-email@dominio.com</strong>
+            </p>
+            <div class="legal-callout" style="text-align: left; font-size: 0.82rem; margin: 1.25rem 0;">
+              <i class="fa-solid fa-shield-halved text-gold"></i>
+              <strong>Verificação Obrigatória Antifraude:</strong>
+              Para assegurar a autenticidade dos dados e impedir cadastros falsos, o acesso à plataforma e ao acompanhamento de vagas só é liberado após a confirmação do link enviado ao seu e-mail.
+            </div>
+            <p class="verify-subtext">
+              Acesse sua caixa de entrada e clique no link de confirmação do Firebase. Não se esqueça de checar a pasta de <strong>Spam / Lixo Eletrônico</strong>.
+            </p>
+            
+            <button type="button" class="btn btn-primary w-100" id="btn-check-verified" style="margin-bottom: 0.65rem;">
+              <span class="spinner" id="verify-check-spinner" style="display: none;"></span>
+              <span id="btn-check-verified-text"><i class="fa-solid fa-check-double"></i> Já confirmei meu e-mail</span>
+            </button>
+
+            <button type="button" class="btn btn-outline w-100" id="btn-resend-verification">
+              <span class="spinner" id="resend-spinner" style="display: none;"></span>
+              <span id="btn-resend-text"><i class="fa-solid fa-rotate-right"></i> Reenviar link de confirmação</span>
+            </button>
+
+            <p class="login-footer-switch">
+              <button type="button" class="btn-switch-auth" id="btn-verify-back-to-login">
+                <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+              </button>
+            </p>
+          </div>
+        </div>
+
+        <p class="login-security-note">
+          <i class="fa-solid fa-lock"></i> Login seguro pelo Firebase Authentication.
+        </p>
       </div>
     </div>
   </div>

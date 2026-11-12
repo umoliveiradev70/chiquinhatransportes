@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificação de E-mail | Chiquinha Transportes</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="portal.css">
+  <script>(function(){const t=localStorage.getItem('cq_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-service.js"></script>
+  <style>
+    .action-page-wrapper {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .action-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2.75rem 2.25rem;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-md, 0 10px 25px -5px rgba(0,0,0,0.1));
+    }
+    .action-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2.5rem;
+    }
+    .action-icon.loading {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+    .action-icon.success {
+      background: var(--success-soft, #d1fae5);
+      color: var(--success, #10b981);
+    }
+    .action-icon.error {
+      background: var(--danger-soft, #fee2e2);
+      color: var(--danger, #ef4444);
+    }
+    .action-title {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+    }
+    .action-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body class="portal-page">
+  <header class="portal-header">
+    <div class="container portal-header-inner">
+      <a href="index.html">
+        <img src="assets/logo.png" alt="Chiquinha Transportes" class="portal-logo">
+      </a>
+      <div class="portal-actions">
+        <a href="index.html" class="btn btn-outline"><i class="fa-solid fa-house"></i> Início</a>
+        <button class="btn btn-outline" id="theme-toggle" aria-label="Alternar tema">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="action-page-wrapper">
+    <div class="action-card" id="action-box">
+      <!-- ESTADO 1: CARREGANDO -->
+      <div id="state-loading">
+        <div class="action-icon loading">
+          <span class="spinner" style="width: 36px; height: 36px; border-width: 3px; border-top-color: var(--primary);"></span>
+        </div>
+        <h1 class="action-title">Verificando seu e-mail...</h1>
+        <p class="action-desc">
+          Aguarde um instante enquanto confirmamos a autenticidade da sua conta.
+        </p>
+      </div>
+
+      <!-- ESTADO 2: SUCESSO -->
+      <div id="state-success" style="display: none;">
+        <div class="action-icon success">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h1 class="action-title">E-mail Confirmado!</h1>
+        <p class="action-desc">
+          Sua conta na <strong>Chiquinha Transportes</strong> foi verificada com sucesso. Agora você tem acesso completo para acompanhar processos seletivos e manter seu currículo atualizado.
+        </p>
+        <a href="index.html?login=1" class="btn btn-primary w-100" style="font-size: 1rem; padding: 0.85rem;">
+          <i class="fa-solid fa-right-to-bracket"></i> Acessar Minha Conta
+        </a>
+      </div>
+
+      <!-- ESTADO 3: ERRO -->
+      <div id="state-error" style="display: none;">
+        <div class="action-icon error">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h1 class="action-title" id="error-title">Link Inválido ou Expirado</h1>
+        <p class="action-desc" id="error-desc">
+          Não foi possível validar este e-mail. O link pode ter expirado ou já ter sido utilizado anteriormente.
+        </p>
+        <a href="index.html?login=1" class="btn btn-outline w-100" style="margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-arrow-left"></i> Ir para a Tela de Login
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('cq_theme', next);
+    });
+
+    (async function () {
+      const stateLoading = document.getElementById('state-loading');
+      const stateSuccess = document.getElementById('state-success');
+      const stateError = document.getElementById('state-error');
+      const errorTitle = document.getElementById('error-title');
+      const errorDesc = document.getElementById('error-desc');
+
+      function showError(title, message) {
+        stateLoading.style.display = 'none';
+        stateSuccess.style.display = 'none';
+        errorTitle.textContent = title;
+        errorDesc.textContent = message;
+        stateError.style.display = 'block';
+      }
+
+      function showSuccess() {
+        stateLoading.style.display = 'none';
+        stateError.style.display = 'none';
+        stateSuccess.style.display = 'block';
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const actionCode = params.get('oobCode') || params.get('code');
+
+      if (!actionCode) {
+        showError('Código não fornecido', 'Nenhum código de verificação foi encontrado na URL. Verifique o link enviado ao seu e-mail.');
+        return;
+      }
+
+      const services = window.cqFirebase;
+      if (!services || !services.configured) {
+        showError('Erro de Configuração', 'O serviço de autenticação do Firebase ainda não foi inicializado.');
+        return;
+      }
+
+      try {
+        await services.applyActionCode(actionCode);
+        showSuccess();
+      } catch (err) {
+        console.error('Erro na validação do código:', err);
+        const code = err.code || '';
+        let msg = 'Não foi possível confirmar seu e-mail com este link. Ele pode já ter sido utilizado ou expirou.';
+        if (code === 'auth/expired-action-code') {
+          msg = 'Este link de verificação expirou. Por favor, solicite um novo link de confirmação no portal.';
+        } else if (code === 'auth/invalid-action-code') {
+          msg = 'Este link de verificação é inválido ou já foi utilizado.';
+        } else if (code === 'auth/user-disabled') {
+          msg = 'A conta de usuário associada a este e-mail foi desativada.';
+        }
+        showError('Falha na Confirmação', msg);
+      }
+    })();
+  </script>
+</body>
+</html>

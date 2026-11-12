@@ -1,430 +1,254 @@
-# Chiquinha Transportes — Portal Corporativo de Carreiras e Recrutamento
+# 🚛 Chiquinha Transportes — Portal Corporativo de Carreiras
 
-> **"Seu destino, nosso compromisso."**  
-> Plataforma corporativa de atração de talentos, recrutamento e seleção da Chiquinha Transportes, desenvolvida com padrões avançados de experiência do usuário (UX/UI de alto padrão), integração serverless com Firebase e entrega transacional de currículos via Resend API.
+<div align="center">
 
----
+> *"Seu destino, nosso compromisso."*
 
-## Sumário
+![Versão](https://img.shields.io/badge/Versão-2.2.0-d97706?style=for-the-badge)
+![Status](https://img.shields.io/badge/Ambiente-Produção-10b981?style=for-the-badge)
+![LGPD](https://img.shields.io/badge/LGPD-Conforme-3b82f6?style=for-the-badge)
+![Segurança](https://img.shields.io/badge/Antifraude-Verificação%20Obrigatória-7c3aed?style=for-the-badge)
+![Tema](https://img.shields.io/badge/Design-Dark%20%2F%20Light-111827?style=for-the-badge)
 
-1. [Visão Geral e Propósito](#visão-geral-e-propósito)
-2. [Arquitetura da Solução e Integrações](#arquitetura-da-solução-e-integrações)
-   - [Diagrama de Fluxo e Integração de Dados](#diagrama-de-fluxo-e-integração-de-dados)
-   - [Autenticação e Gestão de Identidade (Firebase Authentication)](#autenticação-e-gestão-de-identidade-firebase-authentication)
-   - [Armazenamento e Sincronização em Tempo Real (Cloud Firestore)](#armazenamento-e-sincronização-em-tempo-real-cloud-firestore)
-   - [Notificações e Envio Transacional de Currículos (Resend API)](#notificações-e-envio-transacional-de-currículos-resend-api)
-   - [Camada de Backend Híbrida (Node.js e Vercel Serverless Functions)](#camada-de-backend-híbrida-nodejs-e-vercel-serverless-functions)
-3. [Módulos do Sistema](#módulos-do-sistema)
-   - [Portal Público de Vagas](#portal-público-de-vagas)
-   - [Área do Candidato](#área-do-candidato)
-   - [Painel Administrativo do RH](#painel-administrativo-do-rh)
-4. [Segurança, Governança e Conformidade com a LGPD](#segurança-governança-e-conformidade-com-a-lgpd)
-5. [Design System e Identidade Visual](#design-system-e-identidade-visual)
-6. [Tecnologias Utilizadas](#tecnologias-utilizadas)
-7. [Estrutura de Arquivos do Projeto](#estrutura-de-arquivos-do-projeto)
-8. [Configuração do Ambiente e Credenciais](#configuração-do-ambiente-e-credenciais)
-9. [Instruções de Execução Local](#instruções-de-execução-local)
-10. [Guia de Implantação em Produção](#guia-de-implantação-em-produção)
-11. [Recursos de Acessibilidade e Teclas de Atalho](#recursos-de-acessibilidade-e-teclas-de-atalho)
+<p align="center">
+  <strong>Plataforma corporativa de atração de talentos, recrutamento e seleção da Chiquinha Transportes.</strong><br>
+  Desenvolvida com foco em alta performance visual, segurança de dados, acessibilidade universal e conformidade trabalhista e regulatória.
+</p>
+
+</div>
 
 ---
 
-## Visão Geral e Propósito
+## 📑 Sumário
 
-O **Portal Corporativo de Carreiras da Chiquinha Transportes** é uma solução web projetada para centralizar o processo seletivo da companhia. A plataforma atende motoristas rodoviários de carga pesada, operadores logísticos, mecânicos de frota e equipes corporativas e administrativas, cobrindo a matriz e as filiais estratégicas distribuídas pelo território nacional.
-
-A solução é composta por três camadas integradas:
-- **Portal Público de Carreiras**: Apresentação institucional da frota, catálogo dinâmico de oportunidades abertas, busca multicritério, canal de Banco de Talentos e formulário de inscrição em duas abas com drag-and-drop de currículos.
-- **Área do Candidato**: Ambiente restrito com autenticação via Google OAuth para consulta do histórico de candidaturas, identificação por protocolo e acompanhamento de feedbacks do processo seletivo.
-- **Painel Administrativo do RH**: Módulo restrito a recrutadores autorizados com métricas da operação em tempo real, pesquisa de currículos, filtragem por fase e atualização de status com envio de notas ao candidato.
+- [Visão Geral Executiva](#-visão-geral-executiva)
+- [Pilares e Diferenciais da Plataforma](#-pilares-e-diferenciais-da-plataforma)
+- [Arquitetura e Fluxo de Informações](#-arquitetura-e-fluxo-de-informações)
+- [Módulos da Solução](#-módulos-da-solução)
+  - [1. Portal Público de Carreiras](#1-portal-público-de-carreiras)
+  - [2. Área do Candidato](#2-área-do-candidato)
+  - [3. Painel de Recrutamento do RH](#3-painel-de-recrutamento-do-rh)
+  - [4. Central de Governança e Compliance](#4-central-de-governança-e-compliance)
+- [Segurança da Informação e Conformidade Legal](#-segurança-da-informação-e-conformidade-legal)
+- [Design System e Identidade Visual](#-design-system-e-identidade-visual)
+- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Acessibilidade e Usabilidade](#-acessibilidade-e-usabilidade)
 
 ---
 
-## Arquitetura da Solução e Integrações
+## 🌟 Visão Geral Executiva
 
-### Diagrama de Fluxo e Integração de Dados
+O **Portal Corporativo de Carreiras da Chiquinha Transportes** é uma solução digital criada para modernizar e humanizar o processo de seleção da empresa. A plataforma atende desde motoristas de carga pesada rodoviária (carretas, trucks e bitrens) até equipes de logística, manutenção de frota, tecnologia e setores administrativos em todas as filiais do país.
+
+A solução substitui formulários genéricos por uma experiência fluida, transparente e segura, conectando candidatos diretamente à equipe de Recursos Humanos.
+
+---
+
+## 💎 Pilares e Diferenciais da Plataforma
+
+<div align="center">
+
+| Pilar | Descrição |
+|:---:|:---|
+| 🛡️ **Segurança Antifraude** | Validação obrigatória de autenticidade de e-mail e alerta oficial contra cobranças de taxas em processos seletivos. |
+| ⚖️ **Conformidade Legal** | Aderência integral à **LGPD** (Lei 13.709/2018), à **CLT** (Art. 442-A) e à **Lei Antidiscriminação** (Lei 9.029/1995). |
+| ⚡ **Performance e Fluidez** | Inicialização instantânea sem frameworks pesados, com vídeo institucional dinâmico e suporte a *Dark/Light Mode*. |
+| 🤝 **Transparência Total** | Acompanhamento do status de cada candidatura em tempo real, com identificador único de protocolo e notas do recrutador. |
+
+</div>
+
+---
+
+## 🏗️ Arquitetura e Fluxo de Informações
+
+A plataforma utiliza uma arquitetura baseada em serviços de nuvem seguros, desacoplados e de alta disponibilidade:
 
 ```mermaid
 flowchart TD
-    subgraph PublicPortal["Portal Público (index.html)"]
-        User["Candidato"]
-        JobSearch["Busca e Filtros de Vagas"]
-        ApplyModal["Formulário de Candidatura + Upload de CV"]
+    subgraph PortalPublico["🌐 Portal Público de Carreiras"]
+        Candidato["Candidato"]
+        Catalogo["Catálogo & Busca de Vagas"]
+        FormInscricao["Inscrição & Upload de Currículo"]
     end
 
-    subgraph AuthLayer["Autenticação & Controle de Acesso"]
-        GoogleAuth["Firebase Auth (Google OAuth)"]
-        RoleCheck{"Validação de Papel (RBAC)"}
+    subgraph CamadaAutenticacao["🔐 Gestão de Identidade & Acesso"]
+        AuthService["Firebase Authentication"]
+        ValidacaoEmail{"E-mail Confirmado?"}
+        ControleAcesso{"Papel do Usuário (RBAC)"}
     end
 
-    subgraph BackendLayer["Camada Backend & Processamento"]
-        Endpoint["POST /api/send-application (Node.js / Vercel Serverless)"]
-        Resend["Resend API (Envio de E-mail Transacional com Anexo)"]
-        RHEmail["Caixa de Entrada do RH (umoliveiradev@gmail.com)"]
+    subgraph Processamento["⚙️ Processamento Seguro"]
+        ServicoEmail["Serviço de Mensageria Corporativa"]
+        CaixaRH["Caixa de Triagem do RH"]
     end
 
-    subgraph DataLayer["Persistência & Regras de Negócio"]
-        Firestore["Cloud Firestore (Coleção: applications)"]
-        Rules["Security Rules (Controle por userId e admins)"]
+    subgraph Dados["🗄️ Persistência em Tempo Real"]
+        BancoDados["Cloud Firestore (Base Criptografada)"]
+        RegrasSeguranca["Regras de Acesso e Isolamento"]
     end
 
-    subgraph PrivatePortals["Módulos Privados"]
-        CandidateArea["Área do Candidato (candidato.html)"]
-        AdminArea["Painel Administrativo do RH (admin.html)"]
+    subgraph ModulosRestritos["🔒 Ambientes Restritos"]
+        AreaCandidato["Área do Candidato"]
+        PainelRH["Painel Administrativo do RH"]
     end
 
-    User --> JobSearch
-    JobSearch --> ApplyModal
-    ApplyModal --> GoogleAuth
-    GoogleAuth --> Endpoint
-    Endpoint --> Resend
-    Resend --> RHEmail
-    Endpoint --> Firestore
-    Firestore --> Rules
+    Candidato --> Catalogo
+    Catalogo --> FormInscricao
+    FormInscricao --> AuthService
+    AuthService --> ValidacaoEmail
+    ValidacaoEmail -- "Sim" --> Processamento
+    ValidacaoEmail -- "Não" --> Candidato
+    Processamento --> ServicoEmail
+    ServicoEmail --> CaixaRH
+    Processamento --> BancoDados
+    BancoDados --> RegrasSeguranca
 
-    User -. Consulta Candidaturas .-> GoogleAuth
-    GoogleAuth --> RoleCheck
-    RoleCheck -- "Candidato Autenticado" --> CandidateArea
-    RoleCheck -- "Administrador Autorizado" --> AdminArea
-    CandidateArea <-- Leitura de Inscrições do userId --- Firestore
-    AdminArea <-- Gestão e Atualização de Status --- Firestore
+    Candidato -. Login .-> AuthService
+    AuthService --> ControleAcesso
+    ControleAcesso -- "Candidato Verificado" --> AreaCandidato
+    ControleAcesso -- "Gestor / Recrutador" --> PainelRH
+    AreaCandidato <-- Histórico do Candidato --- BancoDados
+    PainelRH <-- Gestão e Triagem Global --- BancoDados
 ```
 
-### Autenticação e Gestão de Identidade (Firebase Authentication)
+### Como funciona cada etapa da solução:
 
-A plataforma utiliza o provedor Google OAuth do **Firebase Authentication** para autenticação unificada sem fricção:
-- Elimina a necessidade de criação de senhas manuais, reduzindo a taxa de abandono durante a candidatura.
-- Coleta automática de dados confiáveis de identificação (nome completo, e-mail verificado e foto de perfil).
-- Roteamento inteligente pós-autenticação:
-  - Usuários convencionais são encaminhados para a **Área do Candidato** (`candidato.html`).
-  - O e-mail administrativo principal (`umoliveiradev@gmail.com`) ou perfis registrados na coleção de administradores são redirecionados automaticamente para o **Painel Administrativo** (`admin.html`).
+1. **Autenticação Segura e Antifraude**:
+   - **Google OAuth**: Acesso ágil e certificado diretamente pela conta Google do candidato.
+   - **E-mail e Senha com Verificação Obrigatória**: Para impedir o uso de e-mails fictícios ou inscrições fraudulentas, todo cadastro por e-mail exige confirmação por link de ativação enviado à caixa de entrada antes de liberar o acesso.
+   - **Roteamento Inteligente**: O sistema identifica o perfil do usuário e direciona candidatos para sua área restrita e recrutadores para o painel de gestão.
 
-### Armazenamento e Sincronização em Tempo Real (Cloud Firestore)
+2. **Entrega Transacional de Currículos**:
+   - Os arquivos de currículo enviados (PDF ou DOCX) são transmitidos via canal criptografado diretamente para a caixa postal da equipe de RH.
+   - **Privacidade por Design**: Os currículos não ficam expostos em diretórios públicos na web, reduzindo a superfície de exposição de dados pessoais.
 
-As informações cadastrais e o ciclo de vida dos processos seletivos são persistidos na base de dados NoSQL **Cloud Firestore**:
-- **Coleção `applications`**: Armazena os dados da inscrição (identificação do cargo, filial, dados pessoais e profissionais do candidato, CNH, notas, data de submissão e carimbo de data/hora do servidor).
-- **Controle de Status do Processo**: Cada documento possui os estados padronizados:
-  - `recebida`: Candidatura recém-enviada aguardando primeira análise.
-  - `triagem`: Análise curricular em andamento pelo setor de seleção.
-  - `entrevista`: Convocação para testes teóricos, práticos ou entrevista individual.
-  - `aprovada`: Candidato selecionado para a etapa de admissão/exames.
-  - `recusada`: Processo seletivo concluído ou encerrado para a vaga em questão.
-- **Notas Administrativas (`adminNote`)**: Canal de retorno direto entre o recrutador e o candidato, visível de forma transparente no painel pessoal do candidato.
-
-### Notificações e Envio Transacional de Currículos (Resend API)
-
-A transmissão de currículos e fichas cadastrais é executada via integração direta com a **Resend API**:
-- **Privacidade e Redução de Superfície de Ataque**: O currículo enviado pelo candidato não é armazenado em buckets públicos de armazenamento em nuvem. O documento é processado em memória como anexo codificado e enviado diretamente à equipe de Recursos Humanos.
-- **Validação de Conteúdo e Formato**: Suporte restrito a formatos profissionais padrão (`application/pdf`, `application/msword` e `application/vnd.openxmlformats-officedocument.wordprocessingml.document`).
-- **Resiliência Transacional**: Em caso de oscilação na entrega de e-mail, o sistema emite respostas HTTP semânticas (400 para inconsistências de validação, 500/502 para indisponibilidade da API externa) e preserva o feedback amigável na interface via notificações flutuantes.
-
-### Camada de Backend Híbrida (Node.js e Vercel Serverless Functions)
-
-A arquitetura foi projetada para operar de modo intercambiável em dois ambientes:
-1. **Servidor Local Node.js (`server.js`)**:
-   - Implementado com a biblioteca nativa `http`, sem dependência de frameworks externos pesados.
-   - Suporte a cabeçalhos `HTTP 206 Partial Content` (Range Requests) para streaming fluido de mídia em alta resolução (vídeo de abertura institucional).
-   - Manipulador da rota `POST /api/send-application` com limite de requisição de 8 MB.
-2. **Serverless na Vercel (`api/send-application.js`)**:
-   - Função Node.js otimizada para execução sob demanda em borda (edge/serverless).
-   - Tratamento de CORS, sanitização de caracteres HTML para prevenir injeções maliciosas e payload configurado para conformidade com os limites de execução do plano serverless (máximo de 3 MB recomendado para o anexo).
+3. **Persistência e Isolamento de Dados**:
+   - O histórico de inscrições e o andamento das etapas são sincronizados em tempo real no banco de dados.
+   - Cada candidato tem acesso estritamente às suas próprias informações, enquanto a edição e atualização de etapas é restrita aos analistas autorizados.
 
 ---
 
-## Módulos do Sistema
+## 📦 Módulos da Solução
 
-### Portal Público de Vagas
+### 1. Portal Público de Carreiras
+- **Vídeo Institucional de Entrada**: Apresentação dinâmica da frota com controles intuitivos de reprodução, áudio e transição fluida.
+- **Busca Multicritério**: Localização instantânea de oportunidades por palavra-chave, cidade, departamento e vagas afirmativas para Pessoas com Deficiência (PcD).
+- **Inscrição em Duas Abas**: Formulário com preenchimento estruturado, máscaras interativas de telefone e categoria de CNH, além de aba com os requisitos detalhados e benefícios corporativos.
+- **Banco de Talentos Geral**: Canal permanente para envio de currículo quando não houver vaga imediata compatível.
+- **Alternador de Tema (Dark/Light)**: Interface adaptável com persistência da preferência do usuário e animações suaves de transição.
 
-O portal principal (`index.html` e `app.js`) reúne os seguintes recursos:
+### 2. Área do Candidato
+- **Painel Pessoal de Vagas**: Consulta simples de todas as oportunidades para as quais o candidato se inscreveu.
+- **Protocolo de Acompanhamento**: Identificador alfanumérico para cada processo seletivo.
+- **Estágios do Processo**: Notificação clara sobre cada fase: *Recebida*, *Em Triagem*, *Entrevista*, *Aprovada* ou *Encerrada*.
+- **Canal de Mensagens do RH**: Exibição em destaque de orientações de comparecimento e recados personalizados deixados pelos recrutadores.
 
-#### 1. Vídeo Institucional de Abertura (Intro Site)
-- Execução automática e temporizada do vídeo institucional acelerado com precisão para 3 segundos de duração.
-- Barra de progresso linear com gradiente dinâmico.
-- Controles audiovisuais: botão de alternância de áudio (início em mudo para garantir conformidade com políticas de autoplay dos navegadores), botão "Pular Abertura", botão de acesso direto e suporte ao fechamento imediato via tecla `Escape`.
-- Transição visual contínua sem cortes abruptos: dissolução progressiva (`filter: blur`, leve `scale` óptico) acompanhada de atenuação logarítmica de áudio (`fadeOutAudio` via `requestAnimationFrame`) e revelação sequencial dos componentes da página (`staggered reveal`).
-- Mecanismo para rever o vídeo a qualquer momento via botão dedicado na seção Hero.
+### 3. Painel de Recrutamento do RH
+- **Dashboard Operacional**: Cartões analíticos que consolidam o total de inscrições, novas candidaturas, processos em andamento e aprovações.
+- **Busca e Filtros Rápidos**: Localização imediata de inscritos por nome, cargo ou fase do processo.
+- **Atualização em Tempo Real**: Alteração de status com salvamento imediato e envio de recados ao candidato.
 
-#### 2. Mecanismo de Busca e Filtros Avançados
-- **Pesquisa Textual**: Busca por palavras-chave com indexação dinâmica em tempo real (título do cargo, requisitos, atribuições, tags e cidades).
-- **Filtro Geográfico por Unidade / Filial**:
-  - Pouso Alegre - MG (Matriz Operacional)
-  - Betim - MG (Filial Grande BH)
-  - Campinas - SP
-  - São Paulo - SP
-  - Rio de Janeiro - RJ
-  - Curitiba - PR
-- **Filtro Setorial / Departamental**:
-  - Motoristas & Operacional
-  - Logística & Armazenagem
-  - Manutenção de Frota
-  - Administrativo & RH
-  - Segurança Patrimonial & Facilities
-- **Chips de Seleção Rápida**: Categorias dedicadas para navegação ágil, incluindo filtro afirmativo para oportunidades reservadas a Pessoas com Deficiência (PcD).
-- **Indicador Dinâmico**: Badge numérico que reflete imediatamente a quantidade de vagas que satisfazem os critérios combinados.
-
-#### 3. Modal de Candidatura em Múltiplas Abas
-- **Aba de Formulário**: Coleta de dados pessoais estruturados, número de telefone celular/WhatsApp com máscara interativa, cidade/UF, categoria da Carteira Nacional de Habilitação (CNH categorias B, C, D, E ou Não Aplicável), observações gerais e termo obrigatório de consentimento da LGPD.
-- **Aba de Requisitos e Benefícios**: Especificação dos desafios da função, qualificações obrigatórias, diferenciais desejáveis e grade completa de benefícios corporativos.
-- **Mecanismo de Upload Drag-and-Drop**: Zona de transferência interativa com suporte para arrastar e soltar arquivos ou seleção via navegador, validação de tamanho (máximo de 5 MB) e pré-visualização detalhada com metadados e botão de substituição.
-
-#### 4. Banco de Talentos Geral
-- Acesso rápido para envio de currículo quando o perfil do profissional não coincidir com as vagas imediatas em aberto, indexando o cadastro sob o identificador institucional `CQ-TALENT`.
-
-#### 5. Seção Institucional e Central de Dúvidas
-- Apresentação da trajetória de mais de 25 anos da Chiquinha Transportes, princípios corporativos e painel com métricas de frota (+1.200 colaboradores, +850 veículos pesados, +45 filiais e índice de 99,4% de pontualidade rodoviária).
-- Central de Perguntas Frequentes (FAQ) interativa no padrão sanfona (accordion) com esclarecimentos sobre prazos médios de retorno, benefícios e vagas afirmativas.
-
-#### 6. Alternador de Tema Escuro e Claro (Dark/Light Mode)
-- Suporte à `View Transitions API` nativa com mecanismo circular expansivo a partir do ponto exato de interação do usuário.
-- Persistência das preferências no `localStorage` sob o parâmetro `cq_theme`.
-- Execução de script no cabeçalho antes do carregamento do DOM para mitigar efeitos indesejados de oscilação visual (FOUC).
+### 4. Central de Governança e Compliance
+- **Política de Privacidade & LGPD (`privacidade.html`)**: Transparência sobre o tratamento de dados, bases legais, prazo de descarte seguro (12 meses) e canal direto com o Encarregado de Dados (DPO).
+- **Termos de Uso (`termos.html`)**: Declaração de autenticidade das informações sob as penas da lei, esclarecimento sobre ausência de vínculo automático e foro de eleição.
+- **Canal de Ética & Denúncias**: Espaço dedicado para comunicação sigilosa de irregularidades, discriminação ou tentativas de golpe.
+- **Termo de Uso de Imagem (`TERMO-USO-IMAGEM.md`)**: Instrumento formal pronto para resguardar a empresa quanto à utilização de imagens e vídeos de colaboradores e motoristas.
 
 ---
 
-### Área do Candidato
+## 🔒 Segurança da Informação e Conformidade Legal
 
-A interface do candidato (`candidato.html` e `candidato.js`) oferece acompanhamento transparente e direto das inscrições realizadas:
-
-- **Autenticação Unificada**: Inicialização por meio de login com o Google, eliminando a criação de cadastros adicionais.
-- **Painel de Inscrições Pessoais**: Consulta automática das candidaturas associadas exclusivamente ao `userId` do candidato autenticado.
-- **Identificação por Protocolo**: Cada processo recebe um identificador de protocolo único derivado da chave primária do documento no Firestore.
-- **Status Atualizado em Tempo Real**: Notificação visual da fase de recrutamento (Recebida, Em triagem, Entrevista, Aprovada ou Encerrada).
-- **Comunicação do RH**: Exibição em destaque de observações, orientações de comparecimento e mensagens personalizadas cadastradas pelos recrutadores.
-- **Confirmação de Documentação**: Garantia de registro de entrega do currículo à equipe de Recursos Humanos.
-
----
-
-### Painel Administrativo do RH
-
-O módulo administrativo (`admin.html` e `admin.js`) fornece as ferramentas para a equipe de atração e seleção gerenciar as demandas corporativas:
-
-- **Controle de Acesso Baseado em Funções (RBAC)**: Bloqueio estrito de acesso para usuários não autorizados no Firebase Authentication e na base de dados.
-- **Painel de Indicadores Operacionais**: Métricas consolidadas em cartões de desempenho:
-  - Total geral de candidaturas cadastradas.
-  - Novas inscrições pendentes de triagem.
-  - Processos em andamento ativo (triagem e entrevistas agendadas).
-  - Candidaturas aprovadas para contratação.
-- **Filtros e Mecanismo de Busca Interno**: Localização de candidatos por nome completo, e-mail de contato, cargo concorrido ou status do processo.
-- **Atualização Direta de Status**: Seletor integrado em cada card para alterar o estágio do candidato com persistência imediata no Cloud Firestore.
-- **Mensageria ao Candidato**: Campo de texto para inserção de anotações e retornos que são refletidos diretamente na Área do Candidato.
-
----
-
-## Segurança, Governança e Conformidade com a LGPD
-
-A arquitetura foi implementada em estrita conformidade com os princípios da Lei Geral de Proteção de Dados (Lei nº 13.709/2018):
-
-1. **Consentimento Explícito**:
-   - O formulário de candidatura possui cláusula obrigatória de consentimento para tratamento dos dados exclusivamente para fins de processos seletivos da Chiquinha Transportes.
-2. **Minimização de Dados e Não Exposição de Arquivos**:
-   - Documentos de currículo não permanecem expostos em diretórios estáticos ou buckets públicos de armazenamento em nuvem. A tramitação ocorre diretamente em canal criptografado via API de e-mail transacional para os analistas responsáveis.
-3. **Regras de Segurança Granulares do Cloud Firestore (`firestore.rules`)**:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    function signedIn() {
-      return request.auth != null;
-    }
-
-    function isAdmin() {
-      return signedIn()
-        && (request.auth.token.email == 'umoliveiradev@gmail.com'
-          || exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
-    }
-
-    match /applications/{applicationId} {
-      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
-      allow read: if signedIn()
-        && (resource.data.userId == request.auth.uid || isAdmin());
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    match /admins/{adminId} {
-      allow read: if signedIn() && request.auth.uid == adminId;
-      allow write: if false;
-    }
-  }
-}
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        COMPLIANCE & SEGURANÇA                          │
+├────────────────────────────────────────────────────────────────────────┤
+│  ✓ LGPD (Lei 13.709/2018): Consentimento ativo e livre de opt-in       │
+│  ✓ CLT (Art. 442-A): Sem exigência de experiência acima de 6 meses     │
+│  ✓ Lei 9.029/1995: Processo seletivo estritamente não discriminatório │
+│  ✓ Prevenção Antifraude: E-mail obrigatório verificado na origem       │
+│  ✓ Transmissão Segura: Comunicação cifrada ponta a ponta (HTTPS/TLS)   │
+│  ✓ Decreto 7.962/2013: Identificação empresarial completa e CNPJ       │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Isolamento de Leitura**: O candidato autenticado possui permissão de leitura exclusivamente sobre registros vinculados ao seu próprio identificador (`request.auth.uid`).
-- **Restrição de Modificação e Exclusão**: Apenas administradores autenticados com permissão explícita podem alterar status, inserir notas ou excluir candidaturas.
-- **Proteção do Cadastro de Administradores**: A coleção `admins` possui escrita bloqueada no cliente (`allow write: if false`), sendo administrada via Console administrativo ou scripts com privilégios de serviço.
+> [!IMPORTANT]
+> **Aviso Oficial de Segurança:** A Chiquinha Transportes não cobra nenhuma taxa, depósito financeiro, valor para uniformes, treinamentos ou exames em qualquer fase de seus processos seletivos. Todos os canais da empresa reforçam esse alerta para proteger os profissionais contra fraudes.
 
 ---
 
-## Design System e Identidade Visual
+## 🎨 Design System e Identidade Visual
 
-O ecossistema visual foi estruturado com CSS Custom Properties (Variáveis CSS), priorizando contraste, legibilidade e elegância institucional:
+A interface foi concebida para transmitir solidez, dinamismo rodoviário e elegância corporativa:
 
-### Paleta Cromática Institucional
-
-| Aplicação | Código Hexadecimal | Descrição e Finalidade |
-|---|---|---|
-| **Âmbar Ouro (Primária)** | `#D97706` / `#F59E0B` | Identidade visual corporativa, energia rodoviária e destaque em botões de ação principal. |
-| **Âmbar Dourado Claro** | `#FBBF24` / `#FEF3C7` | Variações para estados de foco, hover e superfícies suaves de destaque. |
-| **Ônix e Grafite (Fundo Escuro)** | `#0B0F19` / `#111827` | Fundos do modo escuro, conferindo estética sóbria e alto contraste. |
-| **Slate Suave (Superfícies Dark)** | `#1E293B` / `#334155` | Cards, modais flutuantes e bordas estruturadas no modo escuro. |
-| **Gelo e Neve (Fundo Claro)** | `#F8FAFC` / `#FFFFFF` | Fundos do modo claro, assegurando claridade e organização visual. |
-| **Esmeralda (Sucesso)** | `#10B981` / `#D1FAE5` | Confirmação de envio e badges de status aprovado. |
-| **Carmesim (Atenção/Erro)** | `#EF4444` / `#FEE2E2` | Indicadores de campos obrigatórios não preenchidos e falhas de envio. |
-| **Safira (Informativo)** | `#3B82F6` / `#DBEAFE` | Indicadores de processos recebidos e avisos operacionais. |
+### Paleta de Cores
+- **Âmbar Dourado (`#D97706` / `#F59E0B`)**: Cor primária que remete à energia e tradição nas rodovias.
+- **Ônix e Grafite (`#0B0F19` / `#111827`)**: Base para o modo escuro, garantindo conforto visual e sofisticação.
+- **Gelo e Neve (`#F8FAFC` / `#FFFFFF`)**: Base para o modo claro, priorizando organização e clareza de leitura.
+- **Esmeralda (`#10B981`)**: Sinalização de confirmações, sucessos e etapas aprovadas.
 
 ### Tipografia
-
-- **Família Display (Títulos e Números)**: `Outfit` (Google Fonts) — moderna, geométrica e com presença corporativa marcante.
-- **Família de Leitura (Corpo de Texto e Controles)**: `Inter` (Google Fonts) — referência em legibilidade em telas de alta e baixa densidade de pixels.
-
----
-
-## Tecnologias Utilizadas
-
-| Camada | Tecnologia | Detalhes e Justificativa |
-|---|---|---|
-| **Marcação** | HTML5 Semântico | Uso de elementos semânticos (`header`, `nav`, `main`, `section`, `article`, `dialog`, `footer`) com atributos de acessibilidade (WAI-ARIA). |
-| **Estilização** | CSS3 Moderno | Grid bidimensional, Flexbox, animações por keyframes, efeitos de vidro fosco (`backdrop-filter`) e variáveis CSS dinâmicas. |
-| **Lógica de Interface** | JavaScript (ES6+ Vanilla) | Código nativo sem dependência de bibliotecas pesadas de terceiros, garantindo máxima velocidade de carregamento e portabilidade. |
-| **Autenticação** | Firebase Authentication | Fluxo seguro de autenticação com provedor Google OAuth via popup. |
-| **Persistência** | Cloud Firestore | Banco de dados NoSQL com sincronização de coleções e controle estrito de permissões. |
-| **Envio Transacional** | Resend API | API corporativa de entrega de e-mails em formato HTML com suporte a anexos em Base64. |
-| **Ambiente de Execução Local** | Node.js Nativo | Servidor HTTP embutido com tratamento de range de bytes para vídeo e roteamento de API local. |
-| **Execução em Produção** | Vercel Serverless | Endpoint serverless Node.js dedicado ao processamento seguro de candidaturas. |
-| **Iconografia** | Font Awesome 6.5.1 | Biblioteca de ícones vetoriais em formato SVG/Webfont carregada via CDN. |
+- **Títulos e Destaques**: `Outfit` — moderna, geométrica e imponente.
+- **Leitura e Formulários**: `Inter` — referência internacional em legibilidade em telas de qualquer resolução.
 
 ---
 
-## Estrutura de Arquivos do Projeto
+## 💻 Tecnologias Utilizadas
+
+| Tecnologia | Finalidade no Projeto |
+|---|---|
+| **HTML5 Semântico** | Marcação estruturada, acessível (WAI-ARIA) e otimizada para SEO. |
+| **CSS3 Moderno** | Variáveis customizáveis, layout responsivo via Flexbox/Grid e animações nativas. |
+| **JavaScript (ES6+ Vanilla)** | Código leve e rápido sem bibliotecas pesadas de terceiros. |
+| **Firebase Authentication** | Autenticação híbrida (Google OAuth e E-mail/Senha com confirmação obrigatória). |
+| **Cloud Firestore** | Base de dados em tempo real com controle estrito de permissões. |
+| **API Transacional de E-mail** | Entrega segura de candidaturas e anexos diretamente ao RH. |
+| **Node.js Nativo** | Servidor para desenvolvimento local com suporte a streaming de vídeo. |
+| **Vercel Serverless** | Hospedagem de borda com alta disponibilidade e escalabilidade automática. |
+
+---
+
+## 📁 Estrutura do Projeto
 
 ```text
-cqhtrs-main1/
-├── assets/
-│   ├── banner.jpg                 # Fotografia institucional da frota rodoviária
-│   ├── banner_black.png           # Banner principal do Hero para o Tema Escuro
-│   ├── banner_light.png           # Banner principal do Hero para o Tema Claro
-│   ├── introsite.mp4              # Vídeo oficial de abertura institucional (3s)
-│   └── logo.png                   # Logomarca oficial da Chiquinha Transportes
-├── api/
-│   └── send-application.js        # Serverless Function da Vercel para envio via Resend
-├── index.html                     # Estrutura principal do portal público de carreiras
-├── styles.css                     # Folha de estilos unificada, Design System e animações
-├── app.js                        # Lógica da interface do portal, catálogo de vagas e eventos
-├── candidato.html                 # Página restrita da Área do Candidato
-├── candidato.js                   # Lógica de autenticação e renderização de status do candidato
-├── admin.html                     # Página restrita do Painel Administrativo do RH
-├── admin.js                       # Lógica do painel de recrutadores, estatísticas e filtros
-├── portal.css                     # Estilos complementares compartilhados pelos painéis
-├── firebase-config.js             # Credenciais públicas de inicialização do Firebase Client SDK
-├── firebase-service.js            # Módulo de inicialização do Auth e Firestore
-├── firestore.rules                # Regras de segurança e controle de acesso do Cloud Firestore
-├── server.js                      # Servidor HTTP Node.js nativo para desenvolvimento local
-└── README.md                      # Documentação técnica e operacional do ecossistema
+chiquinhatransportes/
+├── assets/                       # Fotografias institucionais, banners, logotipos e vídeo
+├── api/                          # Funções serverless para processamento seguro de candidaturas
+├── index.html                    # Portal público de carreiras e recrutamento
+├── candidato.html                # Área restrita do candidato
+├── admin.html                    # Painel administrativo da equipe de RH
+├── verificar-email.html          # Página customizada de validação de e-mail (marca própria)
+├── redefinir-senha.html          # Página customizada para definição de nova senha
+├── auth-action.html              # Roteador unificado de ações do Firebase
+├── privacidade.html              # Política de Privacidade & LGPD
+├── termos.html                   # Termos de Uso e Canal de Ética
+├── TERMO-USO-IMAGEM.md           # Minuta de autorização de imagem dos colaboradores
+├── styles.css                    # Design System unificado e regras de layout
+├── portal.css                    # Estilização visual dos ambientes restritos
+├── app.js                        # Lógica da interface pública e catálogo de vagas
+├── candidato.js                  # Lógica da Área do Candidato
+├── admin.js                      # Lógica do Painel de Recrutamento
+├── firebase-config.js            # Parâmetros de conexão ao Firebase
+├── firebase-service.js           # Módulo de inicialização e serviços de autenticação
+├── firestore.rules               # Regras de proteção e isolamento do banco de dados
+├── server.js                     # Servidor HTTP local para desenvolvimento
+└── README.md                     # Apresentação executiva da plataforma
 ```
 
 ---
 
-## Configuração do Ambiente e Credenciais
+## ♿ Acessibilidade e Usabilidade
 
-### 1. Configuração do Firebase Client (`firebase-config.js`)
-
-Assegure que os parâmetros do seu projeto no Firebase Console estejam presentes no arquivo `firebase-config.js`:
-
-```javascript
-window.CQ_FIREBASE_CONFIG = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "seu-projeto.firebaseapp.com",
-  projectId: "seu-projeto",
-  storageBucket: "seu-projeto.firebasestorage.app",
-  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-  appId: "SEU_APP_ID",
-  measurementId: "SEU_MEASUREMENT_ID"
-};
-```
-
-### 2. Variáveis de Ambiente para a Resend API
-
-Tanto no ambiente de desenvolvimento local quanto no ambiente de produção na Vercel, defina as seguintes chaves de ambiente:
-
-```bash
-# Chave de API gerada no painel da Resend
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-# E-mail de destino da equipe de Recursos Humanos para recebimento dos currículos
-RESEND_TO_EMAIL=umoliveiradev@gmail.com
-
-# Endereço remetente verificado na Resend
-RESEND_FROM_EMAIL=onboarding@resend.dev
-```
-
-> **Atenção sobre Segurança:** Nunca insira a chave `RESEND_API_KEY` diretamente nos arquivos JavaScript executados no navegador do cliente. Esta credencial deve permanecer restrita à execução no servidor Node.js ou na Serverless Function. Em produção, configure um domínio corporativo verificado (exemplo: `carreiras@chiquinhatransportes.com.br`) na plataforma Resend para evitar filtros de spam.
+- **Navegação por Teclado**: Todo o portal, formulários e modais podem ser operados via teclas `Tab`, `Enter`, `Espaço` e `Escape`.
+- **Sensibilidade a Movimento**: O sistema respeita as preferências de acessibilidade (`prefers-reduced-motion`) desativando animações quando solicitado pelo sistema operacional do usuário.
+- **Alto Contraste Homologado**: Combinações cromáticas testadas para garantir leitura confortável em ambientes externos com sol ou baixa luminosidade.
 
 ---
 
-## Instruções de Execução Local
+<div align="center">
 
-### Execução com o Servidor Node.js Nativo (Recomendado)
+**Chiquinha Transportes Rodoviários Ltda.**  
+*Recursos Humanos & Tecnologia da Informação*  
+Pouso Alegre - MG • Brasil
 
-O projeto inclui um servidor HTTP nativo (`server.js`) configurado com tratamento de cabeçalhos parciais (`Range Requests`), necessário para o funcionamento otimizado do vídeo de abertura e para o processamento de candidaturas locais via Resend.
-
-1. Confirme a instalação do **Node.js** (versão 18.x ou superior recomendada).
-2. Abra o terminal na pasta raiz do projeto e configure as variáveis de ambiente necessárias:
-   - **PowerShell (Windows)**:
-     ```powershell
-     $env:RESEND_API_KEY="sua_chave_resend"
-     $env:RESEND_TO_EMAIL="umoliveiradev@gmail.com"
-     $env:RESEND_FROM_EMAIL="onboarding@resend.dev"
-     node server.js
-     ```
-   - **Bash / Linux / macOS**:
-     ```bash
-     export RESEND_API_KEY="sua_chave_resend"
-     export RESEND_TO_EMAIL="umoliveiradev@gmail.com"
-     export RESEND_FROM_EMAIL="onboarding@resend.dev"
-     node server.js
-     ```
-3. Acesse a aplicação em seu navegador:
-   ```text
-   http://localhost:3000
-   ```
-
-### Execução com a Extensão Live Server (VS Code)
-
-Para testes estáticos rápidos da camada de layout:
-1. No Visual Studio Code, abra a pasta do projeto.
-2. Com o arquivo `index.html` selecionado, clique com o botão direito e escolha **"Open with Live Server"**.
-3. *Nota*: Para testar o envio de candidaturas e envio de e-mails, o servidor Node.js ou a implantação na Vercel deve estar ativo para responder pela rota `/api/send-application`.
-
----
-
-## Guia de Implantação em Produção
-
-### 1. Configuração do Firebase Console
-1. Acesse o [Firebase Console](https://console.firebase.google.com/) e crie ou selecione o projeto correspondente.
-2. Em **Authentication > Sign-in method**, ative o provedor **Google**.
-3. Em **Authentication > Settings > Authorized domains**, cadastre o domínio da sua aplicação (exemplo: `seu-projeto.vercel.app`).
-4. Em **Firestore Database**, crie a base de dados no modo de produção e aplique o conteúdo de `firestore.rules`.
-5. Para autorizar novos administradores além do e-mail padrão configurado (`umoliveiradev@gmail.com`), adicione manualmente um documento na coleção `admins` utilizando o `UID` do usuário como identificador do documento.
-
-### 2. Implantação na Plataforma Vercel
-1. Conecte o repositório do projeto à sua conta na Vercel.
-2. Na seção **Settings > Environment Variables**, cadastre as três variáveis:
-   - `RESEND_API_KEY`
-   - `RESEND_TO_EMAIL`
-   - `RESEND_FROM_EMAIL`
-3. Execute a implantação. A Vercel identificará automaticamente o arquivo `api/send-application.js` como uma Serverless Function e roteará as requisições `POST /api/send-application` com segurança.
-
----
-
-## Recursos de Acessibilidade e Teclas de Atalho
-
-- **Tecla `Escape` (ESC)**: Encerra instantaneamente o vídeo de introdução, modais ativos (candidatura, detalhes de vaga e login) ou o menu gaveta lateral em dispositivos móveis.
-- **Preferência de Redução de Movimento (`prefers-reduced-motion`)**: O CSS detecta as configurações de sensibilidade a movimento do sistema operacional e desativa transições de tela e animações de alto consumo de processamento gráfico.
-- **Relação de Contraste Homologada**: As combinações de cores entre tipografia e planos de fundo foram testadas para atender aos critérios de contraste exigidos pela norma WCAG AA, assegurando conforto visual em ambientes iluminados ou com baixa luz.
-- **Navegação por Teclado e Foco Visível**: Todos os botões, links e campos de formulário contam com anéis de foco evidentes e ordem lógica de tabulação.
-
----
-
-Chiquinha Transportes • Divisão de Recursos Humanos e Tecnologia da Informação  
-Documentação atualizada para a versão de produção.
+</div>

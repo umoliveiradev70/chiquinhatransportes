@@ -208,6 +208,28 @@
   margin-bottom: 1rem;
 }
 
+.portal-alert-success {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.portal-alert-danger {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+[data-theme="dark"] .portal-alert-success {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+}
+
+[data-theme="dark"] .portal-alert-danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+}
+
 @media (max-width: 640px) {
 
   .portal-header-inner,

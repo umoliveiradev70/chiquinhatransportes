@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
-        to: [process.env.RESEND_TO_EMAIL || 'umoliveiradev@gmail.com'],
+        to: process.env.RESEND_TO_EMAIL ? [process.env.RESEND_TO_EMAIL] : ['umoliveiradev@gmail.com', 'chiquinhatransports@gmail.com'],
         reply_to: candidate.email,
         subject: `Nova candidatura: ${payload.jobTitle} - ${candidate.name}`,
         html: `<h2>Nova candidatura recebida</h2><p><strong>Vaga:</strong> ${escapeHtml(payload.jobTitle)}</p><p><strong>Candidato:</strong> ${escapeHtml(candidate.name)}</p><p><strong>E-mail:</strong> ${escapeHtml(candidate.email)}</p><p><strong>Telefone:</strong> ${escapeHtml(candidate.phone || '')}</p><p><strong>Cidade:</strong> ${escapeHtml(candidate.city || '')}</p><p><strong>CNH:</strong> ${escapeHtml(candidate.cnh || '')}</p><p><strong>Estado:</strong> ${escapeHtml(candidate.state || '')}</p><p><strong>Observações:</strong> ${escapeHtml(candidate.notes || 'Não informado')}</p>`,

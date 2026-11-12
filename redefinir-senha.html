@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redefinir Senha | Chiquinha Transportes</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="portal.css">
+  <script>(function(){const t=localStorage.getItem('cq_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-service.js"></script>
+  <style>
+    .action-page-wrapper {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .action-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2.75rem 2.25rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: var(--shadow-md, 0 10px 25px -5px rgba(0,0,0,0.1));
+    }
+    .action-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 2.25rem;
+    }
+    .action-icon.loading {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+    .action-icon.success {
+      background: var(--success-soft, #d1fae5);
+      color: var(--success, #10b981);
+    }
+    .action-icon.error {
+      background: var(--danger-soft, #fee2e2);
+      color: var(--danger, #ef4444);
+    }
+    .action-icon.key {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+    }
+    .action-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .action-desc {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      line-height: 1.55;
+      margin-bottom: 1.75rem;
+      text-align: center;
+    }
+    .target-account-badge {
+      display: inline-block;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body class="portal-page">
+  <header class="portal-header">
+    <div class="container portal-header-inner">
+      <a href="index.html">
+        <img src="assets/logo.png" alt="Chiquinha Transportes" class="portal-logo">
+      </a>
+      <div class="portal-actions">
+        <a href="index.html" class="btn btn-outline"><i class="fa-solid fa-house"></i> Início</a>
+        <button class="btn btn-outline" id="theme-toggle" aria-label="Alternar tema">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="action-page-wrapper">
+    <div class="action-card" id="action-box">
+      <!-- ESTADO 1: CARREGANDO E VALIDANDO CÓDIGO -->
+      <div id="state-loading" style="text-align: center;">
+        <div class="action-icon loading">
+          <span class="spinner" style="width: 36px; height: 36px; border-width: 3px; border-top-color: var(--primary);"></span>
+        </div>
+        <h1 class="action-title">Validando solicitação...</h1>
+        <p class="action-desc">
+          Aguarde um instante enquanto verificamos a autenticidade do link de recuperação.
+        </p>
+      </div>
+
+      <!-- ESTADO 2: FORMULÁRIO DE NOVA SENHA -->
+      <div id="state-form" style="display: none;">
+        <div class="action-icon key">
+          <i class="fa-solid fa-key text-gold"></i>
+        </div>
+        <h1 class="action-title">Crie sua Nova Senha</h1>
+        <p class="action-desc">
+          Defina uma nova senha para sua conta:<br>
+          <span class="target-account-badge" id="account-email-badge">email@exemplo.com</span>
+        </p>
+
+        <form id="form-reset-password" class="auth-form" novalidate>
+          <div class="form-field">
+            <label for="new-password">Nova Senha (mínimo 6 caracteres) <span class="required">*</span></label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="new-password" placeholder="Digite sua nova senha" minlength="6" required autocomplete="new-password">
+              <button type="button" class="btn-toggle-eye" id="toggle-new-pass" aria-label="Mostrar ou ocultar senha" tabindex="-1">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <span class="field-error" id="error-new-pass">A senha deve ter no mínimo 6 dígitos</span>
+          </div>
+
+          <div class="form-field">
+            <label for="confirm-new-password">Confirmar Nova Senha <span class="required">*</span></label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-shield-halved input-icon"></i>
+              <input type="password" id="confirm-new-password" placeholder="Repita a nova senha" minlength="6" required autocomplete="new-password">
+              <button type="button" class="btn-toggle-eye" id="toggle-confirm-pass" aria-label="Mostrar ou ocultar senha" tabindex="-1">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <span class="field-error" id="error-confirm-pass">As senhas não coincidem</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" id="btn-submit-new-pass" style="margin-top: 0.5rem;">
+            <span class="spinner" id="reset-spinner" style="display: none;"></span>
+            <span id="btn-submit-text"><i class="fa-solid fa-check"></i> Salvar Nova Senha</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- ESTADO 3: SUCESSO -->
+      <div id="state-success" style="display: none; text-align: center;">
+        <div class="action-icon success">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h1 class="action-title">Senha Atualizada!</h1>
+        <p class="action-desc">
+          Sua senha de acesso foi redefinida com sucesso. Você já pode acessar a plataforma utilizando suas novas credenciais.
+        </p>
+        <a href="index.html?login=1" class="btn btn-primary w-100" style="padding: 0.85rem;">
+          <i class="fa-solid fa-right-to-bracket"></i> Fazer Login Agora
+        </a>
+      </div>
+
+      <!-- ESTADO 4: ERRO -->
+      <div id="state-error" style="display: none; text-align: center;">
+        <div class="action-icon error">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h1 class="action-title" id="error-title">Link Inválido ou Expirado</h1>
+        <p class="action-desc" id="error-desc">
+          Este link de redefinição de senha não é mais válido. Por motivos de segurança, links de redefinição expiram em poucas horas ou após o primeiro uso.
+        </p>
+        <a href="index.html?login=reset" class="btn btn-primary w-100" style="margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-rotate-right"></i> Solicitar Novo Link
+        </a>
+        <a href="index.html" class="btn btn-outline w-100">
+          <i class="fa-solid fa-arrow-left"></i> Voltar ao Portal
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('cq_theme', next);
+    });
+
+    function initEye(btnId, inputId) {
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(inputId);
+      if (!btn || !input) return;
+      btn.addEventListener('click', () => {
+        const isPass = input.type === 'password';
+        input.type = isPass ? 'text' : 'password';
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = isPass ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+      });
+    }
+
+    initEye('toggle-new-pass', 'new-password');
+    initEye('toggle-confirm-pass', 'confirm-new-password');
+
+    (async function () {
+      const stateLoading = document.getElementById('state-loading');
+      const stateForm = document.getElementById('state-form');
+      const stateSuccess = document.getElementById('state-success');
+      const stateError = document.getElementById('state-error');
+      const errorTitle = document.getElementById('error-title');
+      const errorDesc = document.getElementById('error-desc');
+      const accountEmailBadge = document.getElementById('account-email-badge');
+
+      function showError(title, message) {
+        stateLoading.style.display = 'none';
+        stateForm.style.display = 'none';
+        stateSuccess.style.display = 'none';
+        errorTitle.textContent = title;
+        errorDesc.textContent = message;
+        stateError.style.display = 'block';
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const actionCode = params.get('oobCode') || params.get('code');
+
+      if (!actionCode) {
+        showError('Código Ausente', 'Nenhum código de redefinição de senha foi encontrado na URL.');
+        return;
+      }
+
+      const services = window.cqFirebase;
+      if (!services || !services.configured) {
+        showError('Erro de Configuração', 'O serviço de autenticação do Firebase ainda não foi inicializado.');
+        return;
+      }
+
+      // 1. Valida o código e obtém o e-mail associado
+      let accountEmail = '';
+      try {
+        accountEmail = await services.verifyPasswordResetCode(actionCode);
+        accountEmailBadge.textContent = accountEmail;
+        stateLoading.style.display = 'none';
+        stateForm.style.display = 'block';
+      } catch (err) {
+        console.error('Erro ao verificar código de reset:', err);
+        const code = err.code || '';
+        let msg = 'O link de recuperação de senha é inválido ou expirou. Solicite um novo link.';
+        if (code === 'auth/expired-action-code') {
+          msg = 'O link de redefinição de senha expirou. Por favor, solicite um novo link no portal.';
+        } else if (code === 'auth/invalid-action-code') {
+          msg = 'Este link de redefinição já foi utilizado ou é inválido.';
+        } else if (code === 'auth/user-disabled') {
+          msg = 'Esta conta de usuário foi desativada.';
+        }
+        showError('Link Não Válido', msg);
+        return;
+      }
+
+      // 2. Manipula o envio da nova senha
+      const form = document.getElementById('form-reset-password');
+      const newPassInput = document.getElementById('new-password');
+      const confirmPassInput = document.getElementById('confirm-new-password');
+      const errNewPass = document.getElementById('error-new-pass');
+      const errConfirmPass = document.getElementById('error-confirm-pass');
+      const btnSubmit = document.getElementById('btn-submit-new-pass');
+      const spinner = document.getElementById('reset-spinner');
+      const btnText = document.getElementById('btn-submit-text');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errNewPass.classList.remove('show');
+        errConfirmPass.classList.remove('show');
+
+        const pass = newPassInput.value;
+        const confirm = confirmPassInput.value;
+        let hasError = false;
+
+        if (!pass || pass.length < 6) {
+          errNewPass.classList.add('show');
+          newPassInput.focus();
+          hasError = true;
+        }
+        if (pass !== confirm) {
+          errConfirmPass.classList.add('show');
+          if (!hasError) confirmPassInput.focus();
+          hasError = true;
+        }
+        if (hasError) return;
+
+        btnSubmit.disabled = true;
+        spinner.style.display = 'inline-block';
+        btnText.innerHTML = 'Salvando nova senha...';
+
+        try {
+          await services.confirmPasswordReset(actionCode, pass);
+          stateForm.style.display = 'none';
+          stateSuccess.style.display = 'block';
+        } catch (error) {
+          console.error('Erro ao confirmar reset:', error);
+          const code = error.code || '';
+          let msg = 'Não foi possível alterar sua senha. Tente novamente.';
+          if (code === 'auth/weak-password') {
+            msg = 'A senha digitada é muito fraca. Digite pelo menos 6 caracteres variados.';
+          } else if (code === 'auth/expired-action-code') {
+            msg = 'A sessão deste link expirou durante o preenchimento. Solicite um novo link.';
+          }
+          alert(msg);
+          btnSubmit.disabled = false;
+          spinner.style.display = 'none';
+          btnText.innerHTML = '<i class="fa-solid fa-check"></i> Salvar Nova Senha';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
